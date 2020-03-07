@@ -1,0 +1,43 @@
+{
+  "name": "@scottjarvis/tea",
+  "version": "1.0.0",
+  "description": "Test Environment Application",
+  "author": "sc0ttj",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sc0ttj/tea.git"
+  },
+  "homepage": "https://github.com/sc0ttj/tea",
+  "main": "dist/tea.js",
+  "module": "dist/tea.es6.js",
+  "browser": "dist/tea.umd.js",
+  "unpkg": "dist/tea.umd.js",
+  "source": "src/tea.js",
+  "scripts": {
+    "build": "microbundle --name tea --compress",
+    "dev": "microbundle watch",
+    "test": "echo \"No test specified :/ \""
+  },
+  "keywords": [
+    "test-runner",
+    "test",
+    "testing",
+    "unit-tests",
+    "integration-tests",
+    "tdd",
+    "bdd",
+    "assert",
+    "tap"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "microbundle": "^0.11.0"
+  },
+  "bugs": {
+    "url": "https://github.com/sc0ttj/tea/issues"
+  },
+  "directories": {
+    "example": "examples"
+  }
+}
