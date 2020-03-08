@@ -364,6 +364,14 @@ test("check the page loaded OK", async () => {
 
 ```
 
+Run your GhostJS enabled tests like so:
+
+```console
+ghostjs --browser phantom tests/*.js
+```
+
+NOTE: you can replace 'phantom' with 'chrome' or 'firefox'.
+
 ## Making changes to `tea`
 
 Look in `src/tea.js`, make any changes you like.
