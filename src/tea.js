@@ -500,7 +500,7 @@ export default (tea = function() {
   var hasSymbol = typeof Symbol === "function" && Symbol.for
   tea.REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for("react.element") : 0xeac7
 
-  tea.assert.isReactElement = function(object) {
+  tea.isReactElement = function(object) {
     return (
       typeof object === "object" &&
       object !== null &&
@@ -508,13 +508,21 @@ export default (tea = function() {
     )
   }
 
+  tea.assert.isReactElement = function(msg, a, b) {
+    return tea.assertHarness(tea.isReactElement(a), msg, a, b, "isReactElement")
+  }
+
   // https://stackoverflow.com/questions/4402272/checking-if-data-is-immutable
-  tea.assert.isMutable = function(test) {
+  tea.isMutable = function(test) {
     return test && (typeof test == "object" || typeof test == "function")
   }
 
-  tea.assert.isImmutable = function(test) {
-    return !tea.assert.isMutable(test)
+  tea.assert.isMutable = function(msg, a, b) {
+    return tea.assertHarness(tea.Mutable(a), msg, a, b, "isMutable")
+  }
+
+  tea.assert.isImmutable = function(msg, a, b) {
+    return tea.assertHarness(!tea.Mutable(a), msg, a, b, "isImmutable")
   }
 
   // https://vanillajstoolkit.com/helpers/diff/
