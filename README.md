@@ -184,7 +184,9 @@ node tests/mytests.js
 
 You should see (something like) this:
 
-![test results](https://i.imgur.com/QKz0Fnb.png)
+<p align="center">
+  <img src="https://i.imgur.com/d23VMgu.png" alt="test results" />
+</p>
 
 ## Advanced usage
 
@@ -269,9 +271,11 @@ feature("Calculator", () => {
 
 ```
 
-The test results output will be labelled and indented appropriately:
+The test results output will be indented appropriately, like so:
 
-![Grouped test results](https://i.imgur.com/bfHl4tO.png)
+<p align="center">
+  <img src="https://i.imgur.com/bfHl4tO.png" alt="grouped and indented test results" />
+</p>
 
 ## Integration tests
 
@@ -303,7 +307,9 @@ In the browser, passing command-line options like `--quiet` won't work, but you 
 
 You'll be able to see the test results in the DevTools:
 
-![test results in DevTools](https://i.imgur.com/bQ7auuy.png)
+<p align="center">
+  <img src="https://i.imgur.com/bQ7auuy.png" alt="test results shown in DevTools" />
+</p>
 
 ### Running in a headless browser
 
