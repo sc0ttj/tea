@@ -454,7 +454,7 @@ export default (tea = function() {
   // function that accepts an object containing 'msg', actual', 'expected'
   tea.assert = function(options = {}) {
     return tea.assertHarness(
-      (options.actual === options.expected),
+      (options.actual === (options.expected || true)),
       options.message,
       options.actual,
       options.expected || true,

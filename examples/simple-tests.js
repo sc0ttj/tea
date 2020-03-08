@@ -69,7 +69,7 @@ test("test using assert, object syntax", () => {
     actual: demoApp.add(5, 10)
   })
   assert({
-    message: "assertion, missing 'expected', assumes true",
+    message: "assertion, 1 + 1 = 2, missing 'expected', assumes true",
     actual: demoApp.add(1, 1) === 2
   })
 })
