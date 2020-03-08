@@ -18,11 +18,11 @@ test("check the page loaded OK", async () => {
   // check page title
   await ghost.open("http://google.com")
   let pageTitle = await ghost.pageTitle()
-  assert.eq(pageTitle, "Google")
+  assert.strictEquals(pageTitle, "Google")
 
   // check the content of the body
   let body = await ghost.findElement("body")
-  assert.eq(await body.isVisible(), true)
+  assert.strictEquals(await body.isVisible(), true)
 
   // ...
 })

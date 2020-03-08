@@ -37,20 +37,17 @@ test("test using expect, description here", () => {
 
 //
 // tests using the 'assert' assertion method
-test("test using assert, description here", () => {
-  assert.isType("demo.app is should be a function", demoApp.add, "function")
-  assert.isString("foo should be a String", "foo", true)
-  assert.isFunction("demo.app is should be a function", demoApp.add, true)
-  assert.eq("1 should equal 1", 1, 1)
-  assert.eq("1 + 1 should equal 2", demoApp.add(1, 1), 2)
-  assert.equals(
-    "simple obj1 should equal simple obj1",
+test("test using ASSERT, description here", () => {
+  assert.isType("isType: demo.app is should be a function", demoApp.add, "function")
+  assert.strictEquals("strictEquals: 1 + 1 should equal 2", demoApp.add(1, 1), 2)
+  assert.deepEquals(
+    "deepEquals: obj1 should equal simple obj1",
     { foo: "bar" },
     { foo: "bar" }
   )
   var obj1 = { name: "dan", age: 22, stats: { s: 10, b: 20, c: 31 } }
   var obj2 = { name: "bob", age: 21, stats: { s: 10, b: 20, c: 30 } }
-  assert.isEqual("obj1 should equal obj2", obj1, obj2)
+  assert.deepEquals("deepEquals: obj1 should equal obj2", obj1, obj2)
 })
 
 //

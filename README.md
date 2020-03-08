@@ -27,8 +27,8 @@
   - end to end tests
 - supports the following CLI options:
   - `--fail-fast`: exit after the first failing test
-  - `--quiet`: only show failing tests 
-  - `--verbose`: show expected/actual for all tests (including passing tests) 
+  - `--quiet`: only show failing tests
+  - `--verbose`: show expected/actual for all tests (including passing tests)
 
 ## Installation
 
@@ -52,7 +52,7 @@ Create a file to contain your tests:
 touch ./tests/mytests.js
 ```
 
-## Usage 
+## Usage
 
 Initialise `tea` in `tests/mytests.js`:
 
@@ -76,7 +76,7 @@ tea = require('tea');
 
 tea()  /* initialise tea by running it */
 
-/*   Optionally define some test hooks.. 
+/*   Optionally define some test hooks..
  test.beforeEach = () => console.log("before each")
  test.beforeAll  = () => console.log("before all")
  test.afterEach  = () => console.log("after each")
@@ -136,6 +136,18 @@ Usage:
 assert.foo(msg, actual, expected)
 ```
 
+Where `foo` can be any of these methods:
+
+- `assert.truthy()` - checks if something is truthy
+- `assert.falsey()` - checks if something is falsey
+- `assert.eq()` - uses the `==` comparison (alias of `assert.equals()`)
+- `assert.strictEquals()` - uses the `===` comparison
+- `assert.deepEquals()` - uses the `react-fast-compare` deep equals comparison
+- `assert.isType()` - uses a `typeof` comparison
+- `assert.isImmutable()` - checks if something is a Boolean, Number, String, Null
+- `assert.isMutable()` - checks if something is an Object, Array, Function, Class, Map, or Set
+- `assert.isReactElement()` - checks object contains `$$typeof = REACT_ELEMENT_TYPE`
+
 Examples:
 
 ```js
@@ -143,18 +155,17 @@ Examples:
 
 test("test using assert, description here", () => {
   assert.isType("app.add should be a function", app.add, "function")
-  assert.isString("foo should be a String", "foo", true)
-  assert.isFunction("app.add should be a function", app.add, true)
-  assert.eq("1 should equal 1", 1, 1)
-  assert.eq("1 + 1 should equal 2", app.add(1, 1), 2)
-  assert.equals(
+  assert.isType("[1,2,3] should be an array", [1,2,3], "array")
+  assert.equals("1 should equal 1", 1, 1)
+  assert.strictEquals("1 + 1 should equal 2", app.add(1, 1), 2)
+  assert.deepEquals(
     "simple obj1 should equal simple obj1",
     { foo: "bar" },
     { foo: "bar" }
   )
   var obj1 = { name: "dan", age: 22, stats: { s: 10, b: 20, c: 31 } }
   var obj2 = { name: "bob", age: 21, stats: { s: 10, b: 20, c: 30 } }
-  assert.isEqual("obj1 should equal obj2", obj1, obj2)
+  assert.deepEquals("obj1 should equal obj2", obj1, obj2)
 })
 
 // run the tests
@@ -175,7 +186,7 @@ assert({
 })
 ```
 
-Examples: 
+Examples:
 
 ```js
 /* tests using 'assert' with object syntax */
@@ -227,7 +238,7 @@ Options:
   --quiet            Only list failing tests
   --verbose          List the actual/expected results of passing tests too
   --help             Show this help screen
- 
+
 ```
 
 ### BDD style tests
@@ -239,10 +250,10 @@ Tests can be grouped arbitrarily, using the `group` function. Example:
 
 group("First group of tests", () => {
   test("some message", () => {
-    assert.eq("one should equal one", 1, 1)
+    assert.strictEquals("one should equal one", 1, 1)
   })
   test("some message", () => {
-    assert.eq("one should equal one", 1, 1)
+    assert.strictEquals("one should equal one", 1, 1)
   })
 })
 ```
@@ -279,19 +290,19 @@ feature("Calculator", () => {
 
   scenario("Addition and subtraction", () => {
     test("Additions", () => {
-      expect("1 + 1 equals 2", app.add(1, 1), 2)      
+      expect("1 + 1 equals 2", app.add(1, 1), 2)
     })
     test("Subtractions", () => {
-      expect("1 - 1 equals 2", app.sub(1, 1), 0)      
+      expect("1 - 1 equals 2", app.sub(1, 1), 0)
     })
   })
 
   scenario("Dividing numbers", () => {
     test("Dividing numbers", () => {
-      expect("10 / 2 equals 5", app.div(10, 2), 5)      
+      expect("10 / 2 equals 5", app.div(10, 2), 5)
     })
     test("Dividing nonsense", () => {
-      expect("1 - 'foo' equals NaN", app.sub(1, 'foo'), NaN)      
+      expect("1 - 'foo' equals NaN", app.sub(1, 'foo'), NaN)
     })
   })
 
@@ -319,7 +330,7 @@ If setting up a headles browser is too much work, you can use `tea` to test stuf
 
   test("check text in page", function(){
     var el = document.getElementById('#myElem')
-    assert.eq("elem contains correct text", el.innerText, "expected text")
+    assert.strictEquals("elem contains correct text", el.innerText, "expected text")
   })
 
   run() // run tests
@@ -329,7 +340,7 @@ If setting up a headles browser is too much work, you can use `tea` to test stuf
 
 You can even copy and paste `dist/tea.umd.js` into the DevTools console directly! ...Then just write/paste some tests in the console and call `run()`.
 
-**NOTE**: 
+**NOTE**:
 
 In the browser, passing command-line options like `--quiet` won't work, but you can set `tea.quiet = true`, `tea.args.verbose = true`, and `tea.failFast = true` in the DevTools directly, and then call `run()`.
 
@@ -381,11 +392,11 @@ test("check the page loaded OK", async () => {
   // Get page title
   await ghost.open('http://google.com')
   let pageTitle = await ghost.pageTitle()
-  assert.eq(pageTitle, 'Google')
+  assert.strictEquals(pageTitle, 'Google')
 
   // Get the content of the body
   let body = await ghost.findElement('body')
-  assert.eq(await body.isVisible(), true)
+  assert.strictEquals(await body.isVisible(), true)
 })
 
 ...
@@ -409,13 +420,8 @@ Rebuild the bundles in `dist/` using this command: `npm run build`
 ## To do
 
 - Add TAP format results reporter
-- Add `skip.test(...)` to easily skip tests 
+- Add `skip.test(...)` to easily skip tests
 - Add more assertions:
-  - `assert.truthy`
-  - `assert.falsey`
-  - `assert.isReactElement`
-  - `assert.isImmutable`
-  - `assert.isNotImmutable`
   - `assert.throwsError`
   - `assert.matchesRegex` - ensure `foo` matches a regex `assert.regex(msg, regex, expected)`
   - etc

@@ -1,34 +1,5 @@
 /* global Map:readonly, Set:readonly, ArrayBuffer:readonly */
 
-// from: react/packages/shared/ReactSymbols.js
-// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-// nor polyfill, then a plain number is used for performance.
-var hasSymbol = typeof Symbol === "function" && Symbol.for
-var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for("react.element") : 0xeac7
-/**
- * Verifies the object is a ReactElement.
- * See https://reactjs.org/docs/react-api.html#isvalidelement
- * @param {?object} object
- * @return {boolean} True if `object` is a ReactElement.
- * @final
- */
-function isReactElement(object) {
-  return (
-    typeof object === "object" &&
-    object !== null &&
-    object.$$typeof === REACT_ELEMENT_TYPE
-  )
-}
-
-// https://stackoverflow.com/questions/4402272/checking-if-data-is-immutable
-var isMutable = function(test) {
-  return test && (typeof test == "object" || typeof test == "function")
-}
-
-var isImmutable = function(test) {
-  return !isMutable(test)
-}
-
 // main test suite app
 //
 // @TODO:
@@ -162,6 +133,9 @@ export default (tea = function() {
   tea.failFast = false // exit after first tests fails or not
   tea.quiet = false // if true, only show failing tests
   tea.reportFormat = "console" // choose what format to report test results
+  // used to format the test results
+  tea.indent = 2
+  tea.indentStr = ""
 
   // process command-line options: allow user to override default settings
   Object.keys(tea.args).forEach(function(key) {
@@ -189,18 +163,18 @@ export default (tea = function() {
           console.log("\nUsage:  node path/to/tests.js [options]")
           console.log("\nOptions:\n")
           console.log(
-            "  --fail-fast                    Exit after first failing test"
+            "  --fail-fast        Exit after first failing test"
           )
           console.log(
-            "  --format=<name>                The style/format of the test results (console|debug|tap)"
+            "  --format=<name>    The style/format of the test results (console|debug|tap)"
           )
           console.log(
-            "  --quiet                        Only list failing tests"
+            "  --quiet            Only list failing tests"
           )
           console.log(
-            "  --verbose                      List the actual/expected results of passing tests too"
+            "  --verbose          List the actual/expected results of passing tests too"
           )
-          console.log("  --help                         Show this help screen")
+          console.log("  --help             Show this help screen\n")
         }
         if (tea.isNode && typeof process !== "undefined") {
           process.exit(0)
@@ -215,6 +189,7 @@ export default (tea = function() {
   // holder var, used to pass the current test between test() and assert()
   tea.currentTest = {}
 
+  // the function we use for grouping and indenting tests
   tea.scenario = function(msg, fn) {
     tea.tests.push({
       msg: msg,
@@ -274,6 +249,39 @@ export default (tea = function() {
     return this.name + ": " + this.message
   }
 
+  // our various assertion methods call this func to register passes/fails with
+  // the currentTest object for our reporters to work OK..
+  tea.assertHarness = function(assertion, msg, actual, expected, operator) {
+    tea.assertHarness.result = null
+    tea.assertHarness.operator = operator || "==="
+    tea.currentTest.total += 1
+
+    tea.assertHarness.result = assertion
+
+    if (!tea.assertHarness.result) {
+      tea.assertHarness.result = new AssertionError(
+        msg,
+        actual,
+        expected,
+        tea.assertHarness.operator
+      )
+      tea.currentTest.fails += 1
+    } else {
+      tea.currentTest.passes += 1
+    }
+    tea.assertHarness.stack = tea.assertHarness.result.stack
+
+    tea.currentTest.assertions.push({
+      actual,
+      expected,
+      operator: tea.assertHarness.operator,
+      result: tea.assertHarness.result,
+      msg
+    })
+
+    return tea.assertHarness.result
+  }
+
   // runs the given assertion, records the results to current test object
   tea.expect = function(msg, fn, expected) {
     tea.expect.result = null
@@ -321,13 +329,14 @@ export default (tea = function() {
   }
 
   // react-compatible deep equals function (from react-fast-compare@3.0.1)
-  var hasElementType = typeof Element !== "undefined"
-  var hasMap = typeof Map === "function"
-  var hasSet = typeof Set === "function"
-  var hasArrayBuffer = typeof ArrayBuffer === "function"
-  tea.equal = function(a, b) {
-    // START: fast-deep-equal es6/index.js 3.1.1
+  tea.deepEquals = function(a, b) {
     if (a === b) return true
+
+    // START: fast-deep-equal es6/index.js 3.1.1
+    var hasElementType = typeof Element !== "undefined"
+    var hasMap = typeof Map === "function"
+    var hasSet = typeof Set === "function"
+    var hasArrayBuffer = typeof ArrayBuffer === "function"
 
     if (a && b && typeof a == "object" && typeof b == "object") {
       if (a.constructor !== b.constructor) return false
@@ -336,7 +345,7 @@ export default (tea = function() {
       if (Array.isArray(a)) {
         length = a.length
         if (length != b.length) return false
-        for (i = length; i-- !== 0; ) if (!tea.equal(a[i], b[i])) return false
+        for (i = length; i-- !== 0; ) if (!tea.deepEquals(a[i], b[i])) return false
         return true
       }
 
@@ -367,7 +376,7 @@ export default (tea = function() {
         while (!(i = it.next()).done) if (!b.has(i.value[0])) return false
         it = a.entries()
         while (!(i = it.next()).done)
-          if (!tea.equal(i.value[1], b.get(i.value[0]))) return false
+          if (!tea.deepEquals(i.value[1], b.get(i.value[0]))) return false
         return true
       }
 
@@ -413,7 +422,7 @@ export default (tea = function() {
         }
 
         // all other properties should be traversed as usual
-        if (!tea.equal(a[keys[i]], b[keys[i]])) return false
+        if (!tea.deepEquals(a[keys[i]], b[keys[i]])) return false
       }
       // END: react-fast-compare
       return true
@@ -423,10 +432,10 @@ export default (tea = function() {
   }
   // end fast-deep-equal
 
-  // wrapper around tea.equal
+  // wrapper around tea.deepEquals
   tea.isEqual = function(a, b) {
     try {
-      return tea.equal(a, b)
+      return tea.deepEquals(a, b)
     } catch (error) {
       if ((error.message || "").match(/stack|recursion/i)) {
         // warn on circular references, don't crash
@@ -442,9 +451,10 @@ export default (tea = function() {
     }
   }
 
+  // function that accepts an object containing 'msg', actual', 'expected'
   tea.assert = function(options = {}) {
     return tea.assertHarness(
-      tea.isEqual(options.actual, options.expected),
+      (options.actual === options.expected),
       options.message,
       options.actual,
       options.expected || true,
@@ -452,13 +462,23 @@ export default (tea = function() {
     )
   }
 
-  tea.assert.eq = function(msg, a, b) {
-    return tea.assertHarness(tea.isEqual(a, b), msg, a, b, "===")
+  tea.assert.deepEquals = function(msg, a, b) {
+    return tea.assertHarness(tea.isEqual(a, b), msg, a, b, "deep equals")
+  }
+
+  tea.assert.equals = function(msg, a, b) {
+    return tea.assertHarness(a == b, msg, a, b, "==")
+  }
+
+  tea.assert.eq = tea.assert.equals
+
+  tea.assert.strictEquals = function(msg, a, b) {
+    return tea.assertHarness(a === b, msg, a, b, "===")
   }
 
   tea.assert.isType = function(msg, a, b) {
     return tea.assertHarness(
-      typeof a === b,
+      (typeof a === b),
       msg,
       typeof a,
       `${b}`,
@@ -466,61 +486,35 @@ export default (tea = function() {
     )
   }
 
-  tea.assert.isFunction = function(msg, a, b) {
-    return tea.assertHarness(
-      typeof a === "function",
-      msg,
-      typeof a,
-      "function",
-      "typeof Function"
+  tea.assert.truthy = function(msg, a, b) {
+    return tea.assertHarness(!!a, msg, a, b, "Truthy")
+  }
+
+  tea.assert.falsey = function(msg, a, b) {
+    return tea.assertHarness(!a, msg, a, b, "Falsey")
+  }
+
+  // from: react/packages/shared/ReactSymbols.js
+  //   The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+  //   nor polyfill, then a plain number is used for performance.
+  var hasSymbol = typeof Symbol === "function" && Symbol.for
+  tea.REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for("react.element") : 0xeac7
+
+  tea.assert.isReactElement = function(object) {
+    return (
+      typeof object === "object" &&
+      object !== null &&
+      object.$$typeof === tea.REACT_ELEMENT_TYPE
     )
   }
 
-  tea.assert.isString = function(msg, a, b) {
-    return tea.assertHarness(
-      typeof a === "string",
-      msg,
-      typeof a,
-      "string",
-      "typeof String"
-    )
+  // https://stackoverflow.com/questions/4402272/checking-if-data-is-immutable
+  tea.assert.isMutable = function(test) {
+    return test && (typeof test == "object" || typeof test == "function")
   }
 
-  // aliases for assert
-  tea.assert.equals = tea.assert.eq
-  tea.assert.isEqual = tea.assert.eq
-
-  // our various assertion methods call this func to register passes/fails with
-  // the currentTest object for our reporters to work OK..
-  tea.assertHarness = function(assertion, msg, actual, expected, operator) {
-    tea.assertHarness.result = null
-    tea.assertHarness.operator = operator || "==="
-    tea.currentTest.total += 1
-
-    tea.assertHarness.result = assertion
-
-    if (!tea.assertHarness.result) {
-      tea.assertHarness.result = new AssertionError(
-        msg,
-        actual,
-        expected,
-        tea.assertHarness.operator
-      )
-      tea.currentTest.fails += 1
-    } else {
-      tea.currentTest.passes += 1
-    }
-    tea.assertHarness.stack = tea.assertHarness.result.stack
-
-    tea.currentTest.assertions.push({
-      actual,
-      expected,
-      operator: tea.assertHarness.operator,
-      result: tea.assertHarness.result,
-      msg
-    })
-
-    return tea.assertHarness.result
+  tea.assert.isImmutable = function(test) {
+    return !tea.assert.isMutable(test)
   }
 
   // https://vanillajstoolkit.com/helpers/diff/
@@ -701,9 +695,6 @@ export default (tea = function() {
     tea.timeTaken = new Date().getTime() - start
     tea.reportSummary()
   }
-
-  tea.indent = 2
-  tea.indentStr = ""
 
   tea.addIndent = function() {
     for (var i = 0; i < tea.indent; i++) {
@@ -901,7 +892,6 @@ export default (tea = function() {
   global.expect = tea.expect
   global.assert = tea.assert
   global.run = tea.run
-  global.tea = tea
   // syntax like jasmine, mocha, chai
   global.describe = tea.scenario
   global.it = tea.test
@@ -910,6 +900,8 @@ export default (tea = function() {
   global.given = tea.scenario
   global.when = tea.test
   global.then = tea.expect
+  // return main
+  global.tea = tea
 
   return tea
 })
