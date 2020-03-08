@@ -295,7 +295,7 @@ If setting up a headles browser is too much work, you can use `tea` to test stuf
 </script>
 ```
 
-You can even copy and paste `src/tea.js` into the DevTools console directly! ...Then just write/paste some tests in the console and call `run()`.
+You can even copy and paste `dist/tea.umd.js` into the DevTools console directly! ...Then just write/paste some tests in the console and call `run()`.
 
 **NOTE**: 
 
