@@ -107,16 +107,20 @@ The following assertions are built into `tea`:
 
 #### Using `expect`
 
+Usage:
+
+```js
+expect(msg, actual, expected)
+```
+
+Examples:
+
 ```js
 /* tests using the 'expect' assertion method */
 
 test("test using expect, description here", () => {
   expect("1 + 1 should equal 2 is true", app.add(1, 1) === 2, true)
   expect("1 + 1 should equal 2", app.add(1, 1), 2)
-  expect("1 + 1 should equal 2 fails", app.add(1, 1), 3)
-  expect("10 divided by 2 should equal 5", app.div(10, 2), 5)
-  expect("10 divided by 2 should equal 6", app.div(10, 2), 6)
-  expect("1 + 1 * 2  should equal 4", app.foo(1, 1), 4)
   expect("app.c should be undefined", typeof app.c, "undefined")
 })
 
@@ -125,6 +129,14 @@ run()
 ```
 
 #### Using `assert`
+
+Usage:
+
+```js
+assert.foo(msg, actual, expected)
+```
+
+Examples:
 
 ```js
 /* tests using the 'assert' assertion method */
@@ -149,10 +161,25 @@ test("test using assert, description here", () => {
 run()
 ```
 
-The `assert` method can also passed an object:
+#### Using `assert` (object syntax)
+
+The `assert` method can also passed an object.
+
+Usage:
 
 ```js
-// tests using 'assert' object syntax assertion method
+assert({
+  message: "some string",
+  actual: foo,
+  expected: bar,
+})
+```
+
+Examples: 
+
+```js
+/* tests using 'assert' with object syntax */
+
 test("test using assert, object syntax", () => {
   assert({
     message: "10 should equal 10",
@@ -208,7 +235,8 @@ Options:
 Tests can be grouped arbitrarily, using the `group` function. Example:
 
 ```js
-// group tests using the 'group' function
+/* group tests using the 'group' function */
+
 group("First group of tests", () => {
   test("some message", () => {
     assert.eq("one should equal one", 1, 1)
@@ -225,7 +253,7 @@ The `test` function also has these aliases: `it` and `when`.
 This means you can group your tests however you like, and write them in a number of styles:
 
 ```js
-// jasmine or mocha style tests
+/* jasmine or mocha style tests */
 
 describe("Scenario: maths", () => {
   it("should add up the numbers:", () => {
@@ -235,7 +263,7 @@ describe("Scenario: maths", () => {
 })
 
 
-// some (made-up) gherkin style tests
+/* some (made-up) gherkin style tests */
 
 given("Scenario 3: some maths", () => {
   when("we add up the numbers:", () => {
@@ -245,7 +273,7 @@ given("Scenario 3: some maths", () => {
 })
 
 
-// larger BDD/gherkin/cucumber style tests:
+/* larger BDD/gherkin/cucumber style tests */
 
 feature("Calculator", () => {
 
@@ -303,7 +331,7 @@ You can even copy and paste `dist/tea.umd.js` into the DevTools console directly
 
 **NOTE**: 
 
-In the browser, passing command-line options like `--quiet` won't work, but you can instead set `tea.quiet = true`, `tea.args.verbose = true`, and `tea.failFast = true` in the DevTools directly, and then call `run()`.
+In the browser, passing command-line options like `--quiet` won't work, but you can set `tea.quiet = true`, `tea.args.verbose = true`, and `tea.failFast = true` in the DevTools directly, and then call `run()`.
 
 You'll be able to see the test results in the DevTools:
 
@@ -384,17 +412,20 @@ Rebuild the bundles in `dist/` using this command: `npm run build`
 - Add `skip.test(...)` to easily skip tests 
 - Add more assertions:
   - `assert.truthy`
+  - `assert.falsey`
   - `assert.isReactElement`
   - `assert.isImmutable`
   - `assert.isNotImmutable`
   - `assert.throwsError`
-  - `assert.regex` - ensure `foo` matches a regex `assert.regex(msg, regex, expected)`
+  - `assert.matchesRegex` - ensure `foo` matches a regex `assert.regex(msg, regex, expected)`
   - etc
-- Add wrapper/support for PhantomJS (see `node-phantomjs-simple`)
-- Add better stack traces - resolve them and cut out the irrelevant stuff
 - Document testing of the following:
   - React components (see https://reactjs.org/docs/test-utils.html#shallow-rendering)
   - Preact components (also see shallow rendering)
+- Add simple, built-in integration testing support:
+  - include wrapper/support for PhantomJS (see `node-phantomjs-simple`)
+  - bundle phantomjs (32bit and 64bit builds)
+- Add better stack traces - resolve them and cut out the irrelevant stuff
 
 ## Acknowledgements
 
