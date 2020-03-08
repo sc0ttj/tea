@@ -284,7 +284,7 @@ The test results output will be indented appropriately, like so:
 If setting up a headles browser is too much work, you can use `tea` to test stuff in a real page, using a regular old `<script>` tag:
 
 ```html
-<script src="https://unpkg.com/tea/dist/tea.umd.js"></script>
+<script src="https://unpkg.com/@scottjarvis/tea"></script>
 <script>
 
   tea() // init tea
