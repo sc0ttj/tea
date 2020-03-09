@@ -652,6 +652,19 @@ export default (tea = function() {
               operator: "===",
               result: new Error(test.msg)
             }]
+        } else {
+          test.passes = 1;
+          test.fails = 0;
+          test.total = 1;
+          test.status = 'pass'
+          test.result = true,
+          test.assertions = [{
+              msg: test.msg,
+              actual: testResult,
+              expected: test.expected,
+              operator: "===",
+              result: true
+            }]
         }
 
       // test has no 'expected' param
