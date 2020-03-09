@@ -12,8 +12,6 @@ test.afterAll = () => console.log("after all")
 
 // begin tests
 
-tea() // init tea
-
 test("check the page loaded OK", async () => {
   // check page title
   await ghost.open("http://google.com")
@@ -25,4 +23,5 @@ test("check the page loaded OK", async () => {
   assert.strictEquals(await body.isVisible(), true)
 
   // ...
+
 })

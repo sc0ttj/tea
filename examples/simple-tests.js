@@ -12,6 +12,7 @@ test.afterAll = () => console.log("after all")
 // the app to be tested
 var demoApp = {
   add: (a, b) => a + b,
+  sub: (a, b) => a - b,
   div: (a, b) => a / b,
   foo: (a, b) => demoApp.add(a, b) * 2
 }
