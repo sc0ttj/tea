@@ -48,6 +48,14 @@ test("test using ASSERT, description here", () => {
   var obj1 = { name: "dan", age: 22, stats: { s: 10, b: 20, c: 31 } }
   var obj2 = { name: "bob", age: 21, stats: { s: 10, b: 20, c: 30 } }
   assert.deepEquals("deepEquals: obj1 should equal obj2", obj1, obj2)
+
+  assert.truthy("string '' is truthy", '')
+  assert.truthy("string 'foo' is truthy", "foo")
+  assert.falsey("0 is falsey", 0)
+  assert.falsey("1 is falsey", 1)
+  assert.falsey("null is falsey", null, true)
+  assert.isMutable("Object is mutable", {foo: 10}, true)
+  assert.isImmutable("Number is immutable", 99, true)
 })
 
 //

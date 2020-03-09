@@ -513,16 +513,16 @@ export default (tea = function() {
   }
 
   // https://stackoverflow.com/questions/4402272/checking-if-data-is-immutable
-  tea.isMutable = function(test) {
-    return test && (typeof test == "object" || typeof test == "function")
+  tea.isMutable = function(a) {
+    return a && (typeof a == "object" || typeof a == "function")
   }
 
   tea.assert.isMutable = function(msg, a, b) {
-    return tea.assertHarness(tea.Mutable(a), msg, a, b, "isMutable")
+    return tea.assertHarness(tea.isMutable(a), msg, a, b, "isMutable")
   }
 
   tea.assert.isImmutable = function(msg, a, b) {
-    return tea.assertHarness(!tea.Mutable(a), msg, a, b, "isImmutable")
+    return tea.assertHarness(tea.isMutable(a) === false, msg, a, b, "isImmutable")
   }
 
   // https://vanillajstoolkit.com/helpers/diff/
