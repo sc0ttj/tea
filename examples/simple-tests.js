@@ -22,7 +22,7 @@ var demoApp = {
 test("simplest test, 1 === 1", 1 === 1)
 test("simplest failing test, 1 === 1", 1 === 2)
 test("simple test, 1+1 === 2", demoApp.add(1, 1) === 2)
-test("simple test, with expected '2'", demoApp.add(1, 1), 2)
+test("simple failing test, 1+1, with expected '3'", demoApp.add(1, 1), 3)
 
 // tests using the 'expect' assertion method
 test("test using expect, description here", () => {

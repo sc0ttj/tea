@@ -202,12 +202,13 @@ export default (tea = function() {
   }
 
   // test harness - setup the test object, add it to tests array
-  tea.test = function(msg, fn) {
+  tea.test = function(msg, fn, expected="nowt") {
     tea.currentTest = {
       msg: msg,
       indentStr: tea.indentStr,
       status: "pass",
       assertions: [],
+      expected: expected,
       passes: null,
       fails: null,
       total: null,
@@ -627,33 +628,62 @@ export default (tea = function() {
       if (typeof test.beforeEach === "function") {
         test.beforeEach()
       }
-      if (typeof test.fn === "function") {
-        try {
-          // run the func containing the assertions
-          test.fn(tea.expect)
-        } catch (e) {
-          test.result = e
-          //test.stack = e.stack || "<no stack trace>"
-          test.status = "TEST ERROR!!"
+
+      // if a 3rd param (expected) was given, run the test against the expected value
+      if (test.expected !== 'nowt'){
+        var testResult = typeof test.fn === "function" ? test.fn() : test.fn;
+        if (testResult !== test.expected) {
+          var theError = new AssertionError(
+              test.msg,
+              test.fn,
+              test.expected,
+              "==="
+            )
+          test.passes = 0;
+          test.fails = 1;
+          test.total = 1;
+          test.status = 'FAIL'
+          test.result = theError
+          test.stack = theError.stack
+          test.assertions = [{
+              msg: test.msg,
+              actual: testResult,
+              expected: test.expected,
+              operator: "===",
+              result: new Error(test.msg)
+            }]
         }
+
+      // test has no 'expected' param
       } else {
-        // no assertion method used..
-        this.result = test.fn
-        if (this.result) {
-          test.total += 1
-          test.passes += 1
-          test.assertions.push({
-            result: this.result,
-            msg: test.msg
-          })
+        if (typeof test.fn === "function") {
+          try {
+            // run the func containing the assertions
+            test.fn(tea.expect)
+          } catch (e) {
+            test.result = e
+            //test.stack = e.stack || "<no stack trace>"
+            test.status = "TEST ERROR!!"
+          }
         } else {
-          var err = new Error(test.msg)
-          test.total += 1
-          test.fails += 1
-          test.assertions.push({
-            result: err,
-            msg: test.msg
-          })
+          // no assertion method used..
+          this.result = test.fn
+          if (this.result) {
+            test.total += 1
+            test.passes += 1
+            test.assertions.push({
+              result: this.result,
+              msg: test.msg
+            })
+          } else {
+            var err = new Error(test.msg)
+            test.total += 1
+            test.fails += 1
+            test.assertions.push({
+              result: err,
+              msg: test.msg
+            })
+          }
         }
       }
 
