@@ -675,13 +675,17 @@ export default (tea = function() {
             test.fn(tea.expect)
           } catch (e) {
             test.result = e
-            //test.stack = e.stack || "<no stack trace>"
-            test.status = "TEST ERROR!!"
+            tea.log.fail("ERROR IN TEST", " '" + test.msg + "'");
+            console.error({
+              msg: test.msg,
+              result: e
+            })
+            if (tea.isNode) process.exit();
           }
         } else {
           // no assertion method used..
           this.result = test.fn
-          if (this.result) {
+          if (!!this.result) {
             test.total += 1
             test.passes += 1
             test.assertions.push({
@@ -711,7 +715,7 @@ export default (tea = function() {
       }
 
       // dont log groups as failed tests
-      if (test.group) {
+      if (test.group === true) {
         test.fails -= 1
         test.result = ""
         test.status = "pass"
@@ -838,7 +842,7 @@ export default (tea = function() {
       var newline = ""
 
       // only print the test header if we have results to print
-      if ((tea.quiet && failed.length > 0) || tea.quiet === false) {
+      if ((tea.quiet === true && failed.length > 0) || tea.quiet === false) {
         tea.log.header(test.indentStr + test.msg)
         newline = " "
       }
@@ -870,10 +874,10 @@ export default (tea = function() {
           var actual = JSON.stringify(assertion.actual)
           var expected = JSON.stringify(assertion.expected)
 
-          if (assertion.expected) {
+          if (typeof assertion.expected !== "undefined") {
             tea.log(test.indentStr + "    expected:  " + expected)
           }
-          if (assertion.actual) {
+          if (typeof assertion.actual !== "undefined") {
             if (expected !== actual) {
               // if comparing objects or arrays, show a diff
               if (
@@ -920,8 +924,8 @@ export default (tea = function() {
       })
     } else {
       testResults.forEach(result => {
-        if (result.group) return
-        if (tea.quiet && result.result === "ok") return
+        if (result.group === true) return
+        if (tea.quiet === true && result.result === "ok") return
         console.table({
           test: {
             msg: result.msg,
