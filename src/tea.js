@@ -487,11 +487,11 @@ export default (tea = function() {
   }
 
   tea.assert.truthy = function(msg, a, b) {
-    return tea.assertHarness(!!a, msg, a, b, "Truthy")
+    return tea.assertHarness(!!a, msg, a, "truthy", "Truthy")
   }
 
   tea.assert.falsey = function(msg, a, b) {
-    return tea.assertHarness(!a, msg, a, b, "Falsey")
+    return tea.assertHarness(!a, msg, a, "falsey", "Falsey")
   }
 
   // from: react/packages/shared/ReactSymbols.js
@@ -509,7 +509,7 @@ export default (tea = function() {
   }
 
   tea.assert.isReactElement = function(msg, a, b) {
-    return tea.assertHarness(tea.isReactElement(a), msg, a, b, "isReactElement")
+    return tea.assertHarness(tea.isReactElement(a), msg, a, 'typeof ReactElement', "isReactElement")
   }
 
   // https://stackoverflow.com/questions/4402272/checking-if-data-is-immutable
@@ -518,11 +518,11 @@ export default (tea = function() {
   }
 
   tea.assert.isMutable = function(msg, a, b) {
-    return tea.assertHarness(tea.isMutable(a), msg, a, b, "isMutable")
+    return tea.assertHarness(tea.isMutable(a), msg, typeof a, 'mutable object', "isMutable")
   }
 
   tea.assert.isImmutable = function(msg, a, b) {
-    return tea.assertHarness(tea.isMutable(a) === false, msg, a, b, "isImmutable")
+    return tea.assertHarness(tea.isMutable(a) === false, msg, typeof a, 'immutable object', "isImmutable")
   }
 
   // https://vanillajstoolkit.com/helpers/diff/

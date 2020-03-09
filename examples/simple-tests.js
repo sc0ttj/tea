@@ -54,8 +54,8 @@ test("test using ASSERT, description here", () => {
   assert.falsey("0 is falsey", 0)
   assert.falsey("1 is falsey", 1)
   assert.falsey("null is falsey", null, true)
-  assert.isMutable("Object is mutable", {foo: 10}, true)
-  assert.isImmutable("Number is immutable", 99, true)
+  assert.isMutable("Object is mutable", 10)
+  assert.isImmutable("Number is immutable", {foo: 99})
 })
 
 //
