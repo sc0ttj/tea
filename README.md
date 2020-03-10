@@ -29,6 +29,7 @@
   - `--fail-fast`: exit after the first failing test
   - `--quiet`: only show failing tests
   - `--verbose`: show expected/actual for all tests (including passing tests)
+  - `--format=console|tap|debug`: the format of the test results
 
 ## Installation
 
@@ -104,6 +105,7 @@ The following assertions are built into `tea`:
 - `assert`
 - `expect`
 - `should` (alias of expect)
+- `t`
 
 #### Using `expect`
 
@@ -223,7 +225,7 @@ test("test using assert, object syntax", () => {
 run()
 ```
 
-### Using `t`
+#### Using `t`
 
 Usage:
 
@@ -285,6 +287,18 @@ Options:
   --help             Show this help screen
 
 ```
+
+### TAP output
+
+To show test results in [TAP](https://testanything.org/tap-version-13-specification.html) format, use `--format=tap` on the command-line (or `tea.reportFormat = 'tap'` if in the browser/DevTools).
+
+The TAP format is machine-readable, and you can pipe the results to other programs, to prettify it.
+
+These TAP prettifiers work OK with the TAP output of `tea`:
+
+- [tap-difflet](https://github.com/namuol/tap-difflet)
+- [tap-diff](https://github.com/axross/tap-diff)
+- [tap-nyan](https://github.com/calvinmetcalf/tap-nyan)
 
 ### BDD style tests
 
@@ -360,18 +374,6 @@ The test results output will be indented appropriately, like so:
 <p align="center">
   <img src="https://i.imgur.com/bfHl4tO.png" alt="grouped and indented test results" />
 </p>
-
-## TAP output
-
-If you need your test results printed in [TAP](https://testanything.org/tap-version-13-specification.html) format, then use `--format=tap` or `tea.reportFormat = 'tap'`.
-
-The TAP format is machine-readable, and you can pipe the results to other programs, to process or prettify it.
-
-Here are some TAP prettifiers that work OK with the TAP output of `tea`:
-
-- [tap-difflet])(https://github.com/namuol/tap-difflet) - prettifier for TAP formatted test results, works with `tea`
-- [tap-diff])(https://github.com/axross/tap-diff) - prettifier for TAP formatted test results, works with `tea`
-- [tap-nyan])(https://github.com/calvinmetcalf/tap-nyan) - prettifier for TAP formatted test results, works with `tea`
 
 ## Integration tests
 
@@ -476,10 +478,8 @@ Rebuild the bundles in `dist/` using this command: `npm run build`
 
 ## To do
 
-- Add TAP format results reporter
 - Add `skip.test(...)` to easily skip tests
 - Add more assertions:
-  - `assert.throwsError`
   - `assert.matchesRegex` - ensure `foo` matches a regex `assert.regex(msg, regex, expected)`
   - etc
 - Document testing of the following:

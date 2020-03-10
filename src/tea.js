@@ -1018,7 +1018,7 @@ export default (tea = function() {
           tea.log("  operator: " + assertion.operator)
           tea.log("  expected: " + expected)
           tea.log("  actual:   " + actual)
-          tea.log(" ...")
+          tea.log(" ...\n")
         }
       })
     })
