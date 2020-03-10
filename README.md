@@ -13,18 +13,14 @@
 - fast, lightweight, minimal code (~4kb minified and gzipped)
 - very little setup, a fairly complete solution
 - includes assertions, test harness, test runner, test reporter
-- flexible syntax for writing your tests
-- report results in various formats (console, devtools, TAP, debug)
+- supports flexible syntax for writing your tests:
+  - multiple assertion methods and syntaxes
+  - grouped and nested tests
+- report results in various formats (console, DevTools, TAP, debug)
 - works everywhere:
   - Browsers - show test results in the DevTools console
   - NodeJS - show test results in the terminal
   - CI environments - show results in the terminal
-- support a range of tests and testing approaches:
-  - BDD
-  - TDD
-  - unit tests
-  - integrations tests
-  - end to end tests
 - supports the following CLI options:
   - `--fail-fast`: exit after the first failing test
   - `--quiet`: only show failing tests
@@ -68,7 +64,7 @@ tea()  /* initialise tea by running it */
 
 ### Adding tests
 
-`tea` has builtin-in assertion methods, but you don't even need to use them - tests can be as simple as an expression.
+`tea` has various built-in [assertion methods](#using-assertions), and you should use them. But tests can be as simple as an expression.
 
 Lets add some tests, so you have this in `tests/mytests.js`:
 
@@ -84,19 +80,75 @@ tea()  /* initialise tea by running it */
  test.afterAll   = () => console.log("after all")
  */
 
-// tests without assertions
-test("simplest test, 1 === 1", 1 === 1)
-test("simplest test, 1 === 1", 1 === 2)
+// tests without assertions or expected parameter (not recommended for TAP output)
+test("simplest test", 1 === 1)
+test("simplest test fails", 1 === 2)
 
 // tests without assertions, with an 'expected' parameter
-test("simple test, 1+1 expected '2'", 1+1, 2)
-test("simple test, 1+1 expected '2'", 1+1, 2)
+test("simple test, 1 + 1 should be '2'", 1+1, 2)
+test("simple test fails, 1 + 1 should be '2'", 1+1, 3)
+
+// a test using 'expect' assertion method
+test("test using 'expect', description here", () => {
+  expect("1 + 1 should equal 2 is true", 1 + 1 === 2, true)
+  expect("1 + 1 should equal 2", 1 + 1, 2)
+  expect("app should be undefined", typeof app, "undefined")
+})
 
 // run the tests
 run()
 ```
 
-### Using assertions
+## Running your tests
+
+Now you're ready to run your tests:
+
+```console
+node tests/mytests.js
+```
+
+You should see (something like) this:
+
+<p align="center">
+  <img src="https://i.imgur.com/d23VMgu.png" alt="test results" />
+</p>
+
+## Advanced usage
+
+```
+Usage:  node path/to/tests.js [options]
+
+Options:
+
+  --fail-fast        Exit after first failing test
+  --format=<name>    The style/format of the test results (console|debug|tap)
+  --quiet            Only list failing tests
+  --verbose          List the actual/expected results of passing tests too
+  --help             Show this help screen
+
+```
+
+For continuous integration (CI) environments, you might want to enable `--quiet --fail-fast`.
+
+### TAP output
+
+To show test results in [TAP](https://testanything.org/tap-version-13-specification.html) format, use `--format=tap` on the command-line (or `tea.reportFormat = 'tap'` if in the browser/DevTools).
+
+The TAP format is machine-readable, and you can pipe the results to other programs, to prettify it.
+
+These TAP prettifiers work OK with the TAP output of `tea`:
+
+- [tap-difflet](https://github.com/namuol/tap-difflet)
+- [tap-diff](https://github.com/axross/tap-diff)
+- [tap-nyan](https://github.com/calvinmetcalf/tap-nyan)
+
+Example (using `tap-nyan`)
+
+<p align="center">
+  <img align="center" src="https://i.imgur.com/emPMwwi.png" />
+</p>
+
+## Using assertions
 
 You can of course use assertions, instead of simple expressions.
 
@@ -107,7 +159,7 @@ The following assertions are built into `tea`:
 - `should` (alias of expect)
 - `t`
 
-#### Using `expect`
+### Using `expect`
 
 Usage:
 
@@ -130,7 +182,7 @@ test("test using expect, description here", () => {
 run()
 ```
 
-#### Using `assert`
+### Using `assert`
 
 Usage:
 
@@ -185,7 +237,7 @@ test("test using assert, description here", () => {
 run()
 ```
 
-#### Using `assert` (object syntax)
+### Using `assert` (object syntax)
 
 The `assert` method can also passed an object.
 
@@ -225,7 +277,7 @@ test("test using assert, object syntax", () => {
 run()
 ```
 
-#### Using `t`
+### Using `t`
 
 Usage:
 
@@ -259,48 +311,7 @@ test("test using t", () => {
 })
 ```
 
-## Running your tests
-
-Now you're ready to run your tests:
-
-```console
-node tests/mytests.js
-```
-
-You should see (something like) this:
-
-<p align="center">
-  <img src="https://i.imgur.com/d23VMgu.png" alt="test results" />
-</p>
-
-## Advanced usage
-
-```
-Usage:  node path/to/tests.js [options]
-
-Options:
-
-  --fail-fast        Exit after first failing test
-  --format=<name>    The style/format of the test results (console|debug|tap)
-  --quiet            Only list failing tests
-  --verbose          List the actual/expected results of passing tests too
-  --help             Show this help screen
-
-```
-
-### TAP output
-
-To show test results in [TAP](https://testanything.org/tap-version-13-specification.html) format, use `--format=tap` on the command-line (or `tea.reportFormat = 'tap'` if in the browser/DevTools).
-
-The TAP format is machine-readable, and you can pipe the results to other programs, to prettify it.
-
-These TAP prettifiers work OK with the TAP output of `tea`:
-
-- [tap-difflet](https://github.com/namuol/tap-difflet)
-- [tap-diff](https://github.com/axross/tap-diff)
-- [tap-nyan](https://github.com/calvinmetcalf/tap-nyan)
-
-### BDD style tests
+## BDD style tests
 
 Tests can be grouped arbitrarily, using the `group` function. Example:
 
@@ -372,7 +383,7 @@ feature("Calculator", () => {
 The test results output will be indented appropriately, like so:
 
 <p align="center">
-  <img src="https://i.imgur.com/bfHl4tO.png" alt="grouped and indented test results" />
+  <img src="https://i.imgur.com/TRu37YE.png" alt="grouped and indented test results" />
 </p>
 
 ## Integration tests

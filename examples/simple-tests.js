@@ -17,13 +17,15 @@ var demoApp = {
   foo: (a, b) => demoApp.add(a, b) * 2
 }
 
-// begin tests
+// Begin tests
 
-// tests without assertions
-test("simplest test, 1 === 1", 1 === 1)
-test("simplest failing test, 1 === 1", 1 === 2)
-test("simple test, 1+1 === 2", demoApp.add(1, 1) === 2)
-test("simple failing test, 1+1, with expected '3'", demoApp.add(1, 1), 3)
+// tests without assertions or expected parameter (not recommended for TAP output)
+test("simplest test", 1 === 1)
+test("simplest test fails", 1 === 2)
+
+// tests without assertions, with an 'expected' parameter
+test("simple test, 1 + 1 should be '2'", 1+1, 2)
+test("simple test fails, 1 + 1 should be '2'", 1+1, 3)
 
 // tests using the 'expect' assertion method
 test("test using expect, description here", () => {
