@@ -162,15 +162,11 @@ export default (tea = function() {
         if (value) {
           console.log("\nUsage:  node path/to/tests.js [options]")
           console.log("\nOptions:\n")
-          console.log(
-            "  --fail-fast        Exit after first failing test"
-          )
+          console.log("  --fail-fast        Exit after first failing test")
           console.log(
             "  --format=<name>    The style/format of the test results (console|debug|tap)"
           )
-          console.log(
-            "  --quiet            Only list failing tests"
-          )
+          console.log("  --quiet            Only list failing tests")
           console.log(
             "  --verbose          List the actual/expected results of passing tests too"
           )
@@ -202,7 +198,7 @@ export default (tea = function() {
   }
 
   // test harness - setup the test object, add it to tests array
-  tea.test = function(msg, fn, expected="nowt") {
+  tea.test = function(msg, fn, expected = "nowt") {
     tea.currentTest = {
       msg: msg,
       indentStr: tea.indentStr,
@@ -346,7 +342,8 @@ export default (tea = function() {
       if (Array.isArray(a)) {
         length = a.length
         if (length != b.length) return false
-        for (i = length; i-- !== 0; ) if (!tea.deepEquals(a[i], b[i])) return false
+        for (i = length; i-- !== 0; )
+          if (!tea.deepEquals(a[i], b[i])) return false
         return true
       }
 
@@ -455,7 +452,7 @@ export default (tea = function() {
   // function that accepts an object containing 'msg', actual', 'expected'
   tea.assert = function(options = {}) {
     return tea.assertHarness(
-      (options.actual === (options.expected || true)),
+      options.actual === (options.expected || true),
       options.message,
       options.actual,
       options.expected || true,
@@ -479,11 +476,11 @@ export default (tea = function() {
 
   tea.assert.isType = function(msg, a, b) {
     return tea.assertHarness(
-      (typeof a === b),
+      typeof a === b,
       msg,
       typeof a,
-      `${b}`,
-      `typeof ${b}`
+      typeof b,
+      "typeof " + b
     )
   }
 
@@ -501,16 +498,16 @@ export default (tea = function() {
   var hasSymbol = typeof Symbol === "function" && Symbol.for
   tea.REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for("react.element") : 0xeac7
 
-  tea.isReactElement = function(object) {
-    return (
-      typeof object === "object" &&
-      object !== null &&
-      object.$$typeof === tea.REACT_ELEMENT_TYPE
-    )
-  }
-
   tea.assert.isReactElement = function(msg, a, b) {
-    return tea.assertHarness(tea.isReactElement(a), msg, a, 'typeof ReactElement', "isReactElement")
+    return tea.assertHarness(
+      typeof a === "object" &&
+        a !== null &&
+        a.$$typeof === tea.REACT_ELEMENT_TYPE,
+      msg,
+      typeof a,
+      "typeof ReactElement",
+      "isReactElement"
+    )
   }
 
   // https://stackoverflow.com/questions/4402272/checking-if-data-is-immutable
@@ -519,14 +516,69 @@ export default (tea = function() {
   }
 
   tea.assert.isMutable = function(msg, a, b) {
-    return tea.assertHarness(tea.isMutable(a), msg, typeof a, 'mutable object', "isMutable")
+    return tea.assertHarness(
+      tea.isMutable(a),
+      msg,
+      typeof a,
+      "mutable object",
+      "isMutable"
+    )
   }
 
   tea.assert.isImmutable = function(msg, a, b) {
-    return tea.assertHarness(tea.isMutable(a) === false, msg, typeof a, 'immutable object', "isImmutable")
+    return tea.assertHarness(
+      tea.isMutable(a) === false,
+      msg,
+      typeof a,
+      "immutable object",
+      "isImmutable"
+    )
   }
 
-  // https://vanillajstoolkit.com/helpers/diff/
+  tea.assert.throwsError = function(msg, a, b) {
+    return tea.assertHarness(
+      a instanceof Error,
+      msg,
+      a instanceof Error,
+      true,
+      "throwsError"
+    )
+  }
+
+  // TAP (Test Anything Protocol) style assertions
+  tea.t = {}
+  tea.t.plan = function() {
+    return true
+  }
+  tea.t.ok = function(actual) {
+    return tea.assert.truthy(actual + " is truthy", actual, true)
+  }
+  tea.t.notOk = function(actual) {
+    return tea.assert.falsey(actual + " is falsey", actual, true)
+  }
+  tea.t.equal = function(actual, expected) {
+    return tea.assert.equals(actual + " == " + expected, actual, expected)
+  }
+  tea.t.strictEqual = function(actual, expected) {
+    return tea.assert.strictEquals(
+      actual + " === " + expected,
+      actual,
+      expected
+    )
+  }
+  tea.t.deepEqual = function(actual, expected) {
+    return tea.assert.deepEquals(
+      typeof actual + " deep equals " + typeof expected,
+      actual,
+      expected
+    )
+  }
+  tea.t.throws = function(actual, expected) {
+    return tea.assert.throwsError("throws Error: " + actual, actual, expected)
+  }
+
+  // diff method to show only the changes between 2 objects
+  // From: https://vanillajstoolkit.com/helpers/diff/
   tea.diff = function(obj1, obj2) {
     // Make sure an object to compare is provided
     if (!obj2 || Object.prototype.toString.call(obj2) !== "[object Object]") {
@@ -630,44 +682,48 @@ export default (tea = function() {
       }
 
       // if a 3rd param (expected) was given, run the test against the expected value
-      if (test.expected !== 'nowt'){
-        var testResult = typeof test.fn === "function" ? test.fn() : test.fn;
+      if (test.expected !== "nowt") {
+        var testResult = typeof test.fn === "function" ? test.fn() : test.fn
         if (testResult !== test.expected) {
           var theError = new AssertionError(
-              test.msg,
-              test.fn,
-              test.expected,
-              "==="
-            )
-          test.passes = 0;
-          test.fails = 1;
-          test.total = 1;
-          test.status = 'FAIL'
+            test.msg,
+            test.fn,
+            test.expected,
+            "==="
+          )
+          test.passes = 0
+          test.fails = 1
+          test.total = 1
+          test.status = "FAIL"
           test.result = theError
           test.stack = theError.stack
-          test.assertions = [{
+          test.assertions = [
+            {
               msg: test.msg,
               actual: testResult,
               expected: test.expected,
               operator: "===",
               result: new Error(test.msg)
-            }]
+            }
+          ]
         } else {
-          test.passes = 1;
-          test.fails = 0;
-          test.total = 1;
-          test.status = 'pass'
-          test.result = true,
-          test.assertions = [{
-              msg: test.msg,
-              actual: testResult,
-              expected: test.expected,
-              operator: "===",
-              result: true
-            }]
+          test.passes = 1
+          test.fails = 0
+          test.total = 1
+          test.status = "pass"
+          ;(test.result = true),
+            (test.assertions = [
+              {
+                msg: test.msg,
+                actual: testResult,
+                expected: test.expected,
+                operator: "===",
+                result: true
+              }
+            ])
         }
 
-      // test has no 'expected' param
+        // test has no 'expected' param
       } else {
         if (typeof test.fn === "function") {
           try {
@@ -675,12 +731,12 @@ export default (tea = function() {
             test.fn(tea.expect)
           } catch (e) {
             test.result = e
-            tea.log.fail("ERROR IN TEST", " '" + test.msg + "'");
+            tea.log.fail("ERROR IN TEST", " '" + test.msg + "'")
             console.error({
               msg: test.msg,
               result: e
             })
-            if (tea.isNode) process.exit();
+            if (tea.isNode) process.exit()
           }
         } else {
           // no assertion method used..
@@ -800,10 +856,27 @@ export default (tea = function() {
 
   // this summary is appended to end of results, and printed once, at end of tests
   tea.reportSummary = function() {
-    console.log("-------------------------")
-    tea.log("Total tests:  " + tea.testResults.length)
-    tea.log("Total time:   " + tea.timeTaken + "ms")
-    console.log("-------------------------")
+    if (tea.reportFormat === "tap") {
+      var fails = []
+      tea.testResults.forEach(test => {
+        if (test.status === "FAIL") return fails.push(test.msg)
+      })
+
+      var passes = []
+      tea.testResults.forEach(test => {
+        if (test.status !== "FAIL") return passes.push(test.msg)
+      })
+      console.log("\n")
+      console.log("1.." + tea.testResults.length)
+      console.log("# tests " + tea.testResults.length)
+      console.log("# pass " + passes.length)
+      console.log("# fail " + fails.length)
+    } else {
+      console.log("-------------------------")
+      tea.log("Total tests:  " + tea.testResults.length)
+      tea.log("Total time:   " + tea.timeTaken + "ms")
+      console.log("-------------------------")
+    }
   }
 
   // format the results, then report in given format
@@ -906,8 +979,49 @@ export default (tea = function() {
   }
 
   tea.reportTap = function(testResults) {
-    console.log("TAP format not yet implemented")
-    return false
+    console.log("")
+    testResults.forEach((test, n) => {
+      console.log("# " + test.msg)
+
+      var failed = test.assertions.filter((assertion, i) => {
+        return assertion.result.toString().indexOf("Error") !== -1
+      })
+
+      test.assertions.forEach((assertion, i) => {
+        var q = i + 1
+        assertionFailed = false
+        if (assertion.result.toString().indexOf("Error") !== -1) {
+          assertionFailed = true
+        }
+
+        // if --quiet, and no failures, skip reporting the passes
+        if (assertionFailed === false && tea.quiet) return
+
+        // only print any results if an actual test with results (and not just a group)
+        if (!test.group) {
+          if (assertionFailed === false) {
+            console.log("ok " + q + " " + assertion.msg)
+          } else {
+            console.log("not ok " + q + " " + assertion.msg)
+          }
+        }
+
+        // show expected/actual fields for failed assertions:
+        if (
+          assertionFailed === true ||
+          tea.args.verbose === true ||
+          tea.args.v
+        ) {
+          var actual = JSON.stringify(assertion.actual)
+          var expected = JSON.stringify(assertion.expected)
+          tea.log(" ---")
+          tea.log("  operator: " + assertion.operator)
+          tea.log("  expected: " + expected)
+          tea.log("  actual:   " + actual)
+          tea.log(" ...")
+        }
+      })
+    })
   }
 
   tea.reportDebug = function(testResults) {
@@ -946,6 +1060,7 @@ export default (tea = function() {
   global.test = tea.test
   global.expect = tea.expect
   global.assert = tea.assert
+  global.t = tea.t
   global.run = tea.run
   // syntax like jasmine, mocha, chai
   global.describe = tea.scenario

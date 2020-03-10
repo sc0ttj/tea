@@ -10,7 +10,7 @@
 
 ## Features
 
-- fast, lightweight, minimal code (3.5kb minified and gzipped)
+- fast, lightweight, minimal code (~4kb minified and gzipped)
 - very little setup, a fairly complete solution
 - includes assertions, test harness, test runner, test reporter
 - flexible syntax for writing your tests
@@ -144,6 +144,7 @@ Where `foo` can be any of these methods:
 - `assert.strictEquals()` - uses the `===` comparison
 - `assert.deepEquals()` - uses the `react-fast-compare` deep equals comparison
 - `assert.isType()` - uses a `typeof` comparison
+- `assert.throwsError()` - checks if something throws an Error
 - `assert.isImmutable()` - checks if something is a Boolean, Number, String, Null
 - `assert.isMutable()` - checks if something is an Object, Array, Function, Class, Map, or Set
 - `assert.isReactElement()` - checks object contains `$$typeof = REACT_ELEMENT_TYPE`
@@ -166,6 +167,16 @@ test("test using assert, description here", () => {
   var obj1 = { name: "dan", age: 22, stats: { s: 10, b: 20, c: 31 } }
   var obj2 = { name: "bob", age: 21, stats: { s: 10, b: 20, c: 30 } }
   assert.deepEquals("obj1 should equal obj2", obj1, obj2)
+
+  assert.truthy("string '' is truthy", "")
+  assert.truthy("string 'foo' is truthy", "foo")
+  assert.falsey("0 is falsey", 0)
+  assert.falsey("1 is falsey", 1)
+  assert.falsey("null is falsey", null, true)
+  assert.isMutable("Object is mutable", 10)
+  assert.isImmutable("Number is immutable", { foo: 99 })
+  assert.throwsError("Throws an error", "" + new Error())
+  assert.throwsError("Throws an error", new Error())
 })
 
 // run the tests
@@ -210,6 +221,40 @@ test("test using assert, object syntax", () => {
 
 // run the tests
 run()
+```
+
+### Using `t`
+
+Usage:
+
+```js
+t.foo(actual [, expected])
+```
+
+Where `foo` can be any of these methods:
+
+- `t.ok()` - checks if something is truthy
+- `t.notOk()` - checks if something is falsey
+- `t.equal()` - uses the `==` comparison
+- `t.strictEqual()` - uses the `===` comparison
+- `t.deepEqual()` - uses the `react-fast-compare` deep equals comparison
+- `t.throws()` - checks if something throws an error
+
+(Note the difference to `tap` and `tape` - there's no `msg` as the third parameter)
+
+
+```js
+/* using TAP style assertions */
+
+test("test using t", () => {
+  t.equal(1, 1)
+  t.strictEqual(1, "1")
+  t.deepEqual([1, 2, 3], [1, 2, 3])
+  t.deepEqual([1, 2, 3], [1, 3, 4])
+  t.deepEqual({ one: 1, foo: "baz" }, { one: 1, foo: "bar" })
+  t.throws(new Error())
+  t.throws("I'm just a String")
+})
 ```
 
 ## Running your tests
@@ -315,6 +360,18 @@ The test results output will be indented appropriately, like so:
 <p align="center">
   <img src="https://i.imgur.com/bfHl4tO.png" alt="grouped and indented test results" />
 </p>
+
+## TAP output
+
+If you need your test results printed in [TAP](https://testanything.org/tap-version-13-specification.html) format, then use `--format=tap` or `tea.reportFormat = 'tap'`.
+
+The TAP format is machine-readable, and you can pipe the results to other programs, to process or prettify it.
+
+Here are some TAP prettifiers that work OK with the TAP output of `tea`:
+
+- [tap-difflet])(https://github.com/namuol/tap-difflet) - prettifier for TAP formatted test results, works with `tea`
+- [tap-diff])(https://github.com/axross/tap-diff) - prettifier for TAP formatted test results, works with `tea`
+- [tap-nyan])(https://github.com/calvinmetcalf/tap-nyan) - prettifier for TAP formatted test results, works with `tea`
 
 ## Integration tests
 
