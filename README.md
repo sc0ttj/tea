@@ -417,7 +417,7 @@ In the browser, passing command-line options like `--quiet` won't work, but you 
 You'll be able to see the test results in the DevTools:
 
 <p align="center">
-  <img src="https://i.imgur.com/bQ7auuy.png" alt="test results shown in DevTools" />
+  <img src="https://i.imgur.com/PtzXWFW.png" alt="test results shown in DevTools" />
 </p>
 
 ### Running in a headless browser
