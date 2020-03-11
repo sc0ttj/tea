@@ -383,7 +383,7 @@ feature("Calculator", () => {
 The test results output will be indented appropriately, like so:
 
 <p align="center">
-  <img src="https://i.imgur.com/TRu37YE.png" alt="grouped and indented test results" />
+  <img src="https://i.imgur.com/V9wWIMM.png" alt="grouped and indented test results" />
 </p>
 
 ## Integration tests

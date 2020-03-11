@@ -52,7 +52,7 @@
 //
 // 14. DONE implement console reporter (works in Node and Browser Dev Tools)
 //
-// 15. implement TAP reporter
+// 15. DONE implement TAP reporter
 
 try {
   var global = Function("return this")()
