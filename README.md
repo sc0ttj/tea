@@ -359,25 +359,31 @@ given("Scenario 3: some maths", () => {
 feature("Calculator", () => {
 
   scenario("Addition and subtraction", () => {
-    test("Additions", () => {
-      expect("1 + 1 equals 2", app.add(1, 1), 2)
-    })
     test("Subtractions", () => {
-      expect("1 - 1 equals 2", app.sub(1, 1), 0)
+      expect("1 - 1 equals 0", demoApp.sub(1, 1) === 0, true)
+      expect("1 - 1 equals 1", demoApp.sub(1, 1), 1)
+    })
+    test("Additions", () => {
+      expect("1 + 1 equals 2", demoApp.add(1, 1), 2)
+      expect("1 + 1 equals 2", demoApp.add(1, 1), 3)
     })
   })
 
-  scenario("Dividing numbers", () => {
+  scenario("Some mathsy scenario", () => {
     test("Dividing numbers", () => {
-      expect("10 / 2 equals 5", app.div(10, 2), 5)
+      expect("10 / 2 equals 5", demoApp.div(10, 2), 5)
     })
-    test("Dividing nonsense", () => {
-      expect("1 - 'foo' equals NaN", app.sub(1, 'foo'), NaN)
+    test("Working with nonsense", () => {
+      // isNaN reports its type as number, so use this:
+      assert.isType("1 + 10 is a number", 1 + 10, "number")
+      // 1 + "foo" returns string
+      assert.isType("1 + 'foo' is not a number", 1 + 'foo', "string")
+      // 1 - "foo" returns isNaN
+      assert.isType("1 - 'foo' is not a number", 1 - 'foo', "number", false)
     })
   })
 
 })
-
 ```
 
 The test results output will be indented appropriately, like so:
