@@ -32,7 +32,6 @@ given("Scenario 3: some maths", () => {
 })
 
 feature("Calculator", () => {
-
   scenario("Addition and subtraction", () => {
     test("Subtractions", () => {
       expect("1 - 1 equals 0", demoApp.sub(1, 1) === 0, true)
@@ -52,12 +51,11 @@ feature("Calculator", () => {
       // isNaN reports its type as number, so use this:
       assert.isType("1 + 10 is a number", 1 + 10, "number")
       // 1 + "foo" returns string
-      assert.isType("1 + 'foo' is not a number", 1 + 'foo', "string")
+      assert.isType("1 + 'foo' is not a number", 1 + "foo", "string")
       // 1 - "foo" returns isNaN
-      assert.isType("1 - 'foo' is not a number", 1 - 'foo', "number", false)
+      assert.isType("1 - 'foo' is not a number", 1 - "foo", "number", false)
     })
   })
-
 })
 
 run()
