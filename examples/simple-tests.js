@@ -24,8 +24,8 @@ test("simplest test", 1 === 1)
 test("simplest test fails", 1 === 2)
 
 // tests without assertions, with an 'expected' parameter
-test("simple test, 1 + 1 should be '2'", 1+1, 2)
-test("simple test fails, 1 + 1 should be '2'", 1+1, 3)
+test("simple test, 1 + 1 should be '2'", 1 + 1, 2)
+test("simple test fails, 1 + 1 should be '2'", 1 + 1, 3)
 
 // tests using the 'expect' assertion method
 test("test using expect, description here", () => {
@@ -62,9 +62,12 @@ test("test using ASSERT, description here", () => {
 
   assert.truthy("string '' is truthy", "")
   assert.truthy("string 'foo' is truthy", "foo")
+  assert.falsey("false is falsey", false)
+  assert.falsey("true is falsey", true)
   assert.falsey("0 is falsey", 0)
   assert.falsey("1 is falsey", 1)
-  assert.falsey("null is falsey", null, true)
+  assert.falsey('"hello" is falsey', "hello")
+  assert.falsey("null is falsey", null)
   assert.isMutable("Object is mutable", 10)
   assert.isImmutable("Number is immutable", { foo: 99 })
   assert.throwsError("Throws an error", "" + new Error())

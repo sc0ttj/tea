@@ -78,7 +78,7 @@ Error.captureStackTrace =
     })
   }
 
-export default (tea = function() {
+tea = function() {
   // code from browser-or-node package, to detect current environment
   tea.isBrowser =
     typeof window !== "undefined" && typeof window.document !== "undefined"
@@ -250,10 +250,15 @@ export default (tea = function() {
   // the currentTest object for our reporters to work OK..
   tea.assertHarness = function(assertion, msg, actual, expected, operator) {
     tea.assertHarness.result = null
-    tea.assertHarness.operator = operator || "==="
+    tea.assertHarness.operator = operator || "strict equals"
     tea.currentTest.total += 1
 
     tea.assertHarness.result = assertion
+
+    if (operator.toLowerCase() === "falsey" && !!tea.assertHarness.result) {
+      // it was indeed falsey, so result is true
+      tea.assertHarness.result = true
+    }
 
     if (!tea.assertHarness.result) {
       tea.assertHarness.result = new AssertionError(
@@ -456,7 +461,7 @@ export default (tea = function() {
       options.message,
       options.actual,
       options.expected || true,
-      options.operator || "==="
+      options.operator || "strict equals"
     )
   }
 
@@ -465,13 +470,13 @@ export default (tea = function() {
   }
 
   tea.assert.equals = function(msg, a, b) {
-    return tea.assertHarness(a == b, msg, a, b, "==")
+    return tea.assertHarness(a == b, msg, a, b, "equals")
   }
 
   tea.assert.eq = tea.assert.equals
 
   tea.assert.strictEquals = function(msg, a, b) {
-    return tea.assertHarness(a === b, msg, a, b, "===")
+    return tea.assertHarness(a === b, msg, a, b, "strict equals")
   }
 
   tea.assert.isType = function(msg, a, b) {
@@ -485,11 +490,11 @@ export default (tea = function() {
   }
 
   tea.assert.truthy = function(msg, a, b) {
-    return tea.assertHarness(!!a, msg, a, "truthy", "Truthy")
+    return tea.assertHarness(!!a, msg, a, "truthy", "truthy")
   }
 
   tea.assert.falsey = function(msg, a, b) {
-    return tea.assertHarness(!a, msg, a, "falsey", "Falsey")
+    return tea.assertHarness(!a, msg, a, "falsey", "falsey")
   }
 
   // from: react/packages/shared/ReactSymbols.js
@@ -980,15 +985,15 @@ export default (tea = function() {
 
   tea.reportTap = function(testResults) {
     console.log("")
+    var num = 1
     testResults.forEach((test, n) => {
-      console.log("# " + test.msg)
+      console.log(test.msg)
 
       var failed = test.assertions.filter((assertion, i) => {
         return assertion.result.toString().indexOf("Error") !== -1
       })
 
       test.assertions.forEach((assertion, i) => {
-        var q = i + 1
         assertionFailed = false
         if (assertion.result.toString().indexOf("Error") !== -1) {
           assertionFailed = true
@@ -1000,9 +1005,9 @@ export default (tea = function() {
         // only print any results if an actual test with results (and not just a group)
         if (!test.group) {
           if (assertionFailed === false) {
-            console.log("ok " + q + " " + assertion.msg)
+            console.log("ok " + num + " - " + assertion.msg)
           } else {
-            console.log("not ok " + q + " " + assertion.msg)
+            console.log("not ok " + num + " - " + assertion.msg)
           }
         }
 
@@ -1020,6 +1025,7 @@ export default (tea = function() {
           tea.log("  actual:   " + actual)
           tea.log(" ...\n")
         }
+        num++
       })
     })
   }
@@ -1074,4 +1080,6 @@ export default (tea = function() {
   global.tea = tea
 
   return tea
-})
+}
+
+module.exports = tea
