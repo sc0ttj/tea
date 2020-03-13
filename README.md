@@ -145,7 +145,7 @@ These TAP prettifiers work OK with the TAP output of `tea`:
 Example (using `tap-nyan`)
 
 <p align="center">
-  <img align="center" src="https://i.imgur.com/emPMwwi.png" />
+  <img align="center" src="https://i.imgur.com/db3xJXz.png" />
 </p>
 
 ## Using assertions
