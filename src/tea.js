@@ -582,6 +582,9 @@ tea.t = {}
 tea.t.plan = function() {
   return true
 }
+tea.t.end = function() {
+  return true
+}
 tea.t.ok = function(actual) {
   return tea.assert.truthy(actual + " is truthy", actual, true)
 }
