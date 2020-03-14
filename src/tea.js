@@ -899,8 +899,8 @@ tea.reportSummary = function() {
     console.log("\n")
     console.log("1.." + tea.testResults.length)
     console.log("# tests " + tea.testResults.length)
-    console.log("# pass " + passes.length)
-    console.log("# fail " + fails.length)
+    tea.log.pass("# pass " + passes.length, "")
+    tea.log.fail("# fail " + fails.length, "")
   } else {
     console.log("-------------------------")
     tea.log("Total tests:  " + tea.testResults.length)
@@ -1008,7 +1008,7 @@ tea.reportTap = function(testResults) {
   console.log("")
   var num = 1
   testResults.forEach((test, n) => {
-    console.log(test.msg)
+    tea.log.header("# " + test.msg)
 
     var failed = test.assertions.filter((assertion, i) => {
       return assertion.result.toString().indexOf("Error") !== -1
@@ -1026,9 +1026,9 @@ tea.reportTap = function(testResults) {
       // only print any results if an actual test with results (and not just a group)
       if (!test.group) {
         if (assertionFailed === false) {
-          console.log("ok " + num + " - " + assertion.msg)
+          tea.log("ok " + num + " - " + assertion.msg)
         } else {
-          console.log("not ok " + num + " - " + assertion.msg)
+          tea.log("not ok " + num + " - " + assertion.msg)
         }
       }
 
@@ -1037,9 +1037,9 @@ tea.reportTap = function(testResults) {
         var actual = JSON.stringify(assertion.actual)
         var expected = JSON.stringify(assertion.expected)
         tea.log(" ---")
-        tea.log("  operator: " + assertion.operator)
-        tea.log("  expected: " + expected)
-        tea.log("  actual:   " + actual)
+        tea.log.fail("  operator: " + assertion.operator, "")
+        tea.log.fail("  expected: " + expected, "")
+        tea.log.fail("  actual:   " + actual, "")
         tea.log(" ...\n")
       }
       num++
