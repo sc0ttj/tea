@@ -120,12 +120,12 @@ Usage:  node path/to/tests.js [options]
 
 Options:
 
-  --fail-fast        Exit after first failing test
-  --format=<name>    The style/format of the test results (console|debug|tap)
   --quiet            Only list failing tests
+  --fail-fast        Exit after first failing test
   --verbose          List the actual/expected results of passing tests too
+  --format=<name>    The style/format of the test results (console|debug|tap)
+  --no-indent        Don't indent grouped test results (useful if piping to TAP prettifiers)
   --help             Show this help screen
-
 ```
 
 For continuous integration (CI) environments, you might want to enable `--quiet --fail-fast`.
@@ -136,7 +136,9 @@ To show test results in [TAP](https://testanything.org/tap-version-13-specificat
 
 The TAP format is machine-readable, and you can pipe the results to other programs, to prettify it.
 
-These TAP prettifiers work OK with the TAP output of `tea`:
+The TAP output of `tea` is already indented and colourised a bit, to make it easier to read.
+
+But these TAP prettifiers work OK with the TAP output of `tea`:
 
 - [tap-difflet](https://github.com/namuol/tap-difflet)
 - [tap-diff](https://github.com/axross/tap-diff)
@@ -147,6 +149,8 @@ Example (using `tap-nyan`)
 <p align="center">
   <img align="center" src="https://i.imgur.com/db3xJXz.png" />
 </p>
+
+NOTE: If piping to a TAP prettifier, it's recommended to use the `--no-indent` (or `tea.noIndent = true`) setting.
 
 ## Using assertions
 
@@ -392,6 +396,61 @@ The test results output will be indented appropriately, like so:
   <img src="https://i.imgur.com/V9wWIMM.png" alt="grouped and indented test results" />
 </p>
 
+## No globals
+
+Like many TAP-style test suites, `tea` can run without needing any globals or "magic" variables, that seem to come from nowhere.
+
+To run `tea` in a way that does _not_ use globals, see `examples/no-globals-tests.js`:
+
+```js
+tea = require("../src/tea.js")
+
+/*
+ * Follow the TAP style of NOT creating any globals (except 'tea' itself)
+ */
+
+// tea() /* Dont init tea, then it won't register any globals */
+
+/* OPTIONAL - set the default args directly */
+tea.reportFormat = "tap"
+tea.noIndent = true
+
+/* OPTIONAL - alternatively, parse command line arguments (if any) */
+tea.getArgs()
+
+// Begin tests, without using globals
+
+// using TAP style assertions - but no 'msg' as 3rd param to t()
+
+tea.test("test one, using tea.t", t => {
+  t.equal(1, 1)
+  t.strictEqual(1, "1")
+  t.deepEqual([1, 2, 3], [1, 2, 3])
+})
+
+tea.test("test two, using tea.t", t => {
+  t.deepEqual([1, 2, 3], [1, 2, 3])
+  t.deepEqual([1, 2, 3, 4], [4, 5])
+  t.deepEqual({ one: 1, foo: "baz" }, { one: 1, foo: "bar" })
+  t.throws(new Error())
+  t.throws("I'm just a String")
+
+  // using other assertions
+
+  tea.expect("Foo is bar", "foo", "bar")
+})
+
+tea.run()
+
+```
+
+In summary, to avoid using globals with `tea`:
+
+- don't call `tea()` before your tests
+- call `tea.test()` instead of just `tea.test()`
+- pass `t` in as a parameter in your tests, or use `tea.assert`, `tea.expect` inside your tests, instead of just `assert`, `expect`
+- call `tea.run()` instead of just `run()`
+
 ## Integration tests
 
 ### Running in a real browser
@@ -497,7 +556,7 @@ Rebuild the bundles in `dist/` using this command: `npm run build`
 
 - Add `skip.test(...)` to easily skip tests
 - Add more assertions:
-  - `assert.matchesRegex` - ensure `foo` matches a regex `assert.regex(msg, regex, expected)`
+  - `assert.matchesRegex` - ensure `foo` matches a regex `assert.matchesRegex(msg, regex, expected)`
   - etc
 - Document testing of the following:
   - React components (see https://reactjs.org/docs/test-utils.html#shallow-rendering)
