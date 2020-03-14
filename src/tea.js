@@ -104,7 +104,6 @@ try {
 
 tea = function() {
   tea.args = tea.isNode ? tea.getArgs() : {}
-  tea.setArgs()
 
   if (tea.isBrowser) console.clear()
   // code from browser-or-node package, to detect current environment
