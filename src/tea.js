@@ -899,8 +899,8 @@ tea.reportSummary = function() {
     console.log("\n")
     console.log("1.." + tea.testResults.length)
     console.log("# tests " + tea.testResults.length)
-    tea.log.pass("# pass " + passes.length, "")
-    tea.log.fail("# fail " + fails.length, "")
+    console.log("# pass " + passes.length, "")
+    console.log("# fail " + fails.length)
   } else {
     console.log("-------------------------")
     tea.log("Total tests:  " + tea.testResults.length)
