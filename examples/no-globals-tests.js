@@ -16,6 +16,7 @@ var demoApp = {
 
 /* OPTIONAL - set the default args directly */
 tea.reportFormat = "console"
+
 /* OPTIONAL - or parse command line arguments (if any) */
 tea.getArgs()
 

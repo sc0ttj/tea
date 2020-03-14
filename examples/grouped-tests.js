@@ -1,4 +1,4 @@
-tea = require("../dist/tea.js")
+tea = require("../src/tea.js")
 
 tea()
 
