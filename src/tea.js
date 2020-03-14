@@ -174,6 +174,9 @@ tea.setArgs = function() {
   Object.keys(tea.args).forEach(function(key) {
     var value = tea.args[key]
     switch (key) {
+      case "no-indent":
+        if (value === "true" || value === true) tea.noIndent = true
+        break
       case "q":
       case "quiet":
         if (value === "true" || value === true) tea.quiet = true
@@ -195,13 +198,16 @@ tea.setArgs = function() {
         if (value) {
           console.log("\nUsage:  node path/to/tests.js [options]")
           console.log("\nOptions:\n")
+          console.log("  --quiet            Only list failing tests")
           console.log("  --fail-fast        Exit after first failing test")
+          console.log(
+            "  --verbose          List the actual/expected results of passing tests too"
+          )
           console.log(
             "  --format=<name>    The style/format of the test results (console|debug|tap)"
           )
-          console.log("  --quiet            Only list failing tests")
           console.log(
-            "  --verbose          List the actual/expected results of passing tests too"
+            "  --no-indent        Don't indent grouped test results (useful if piping to TAP prettifiers)"
           )
           console.log("  --help             Show this help screen\n")
         }
@@ -1008,7 +1014,9 @@ tea.reportTap = function(testResults) {
   console.log("")
   var num = 1
   testResults.forEach((test, n) => {
-    tea.log.header("# " + test.msg)
+    if (tea.noIndent) test.indentStr = ""
+
+    tea.log.header(test.indentStr + "# " + test.msg)
 
     var failed = test.assertions.filter((assertion, i) => {
       return assertion.result.toString().indexOf("Error") !== -1
@@ -1026,9 +1034,9 @@ tea.reportTap = function(testResults) {
       // only print any results if an actual test with results (and not just a group)
       if (!test.group) {
         if (assertionFailed === false) {
-          tea.log("ok " + num + " - " + assertion.msg)
+          tea.log(test.indentStr + "ok " + num + " - " + assertion.msg)
         } else {
-          tea.log("not ok " + num + " - " + assertion.msg)
+          tea.log(test.indentStr + "not ok " + num + " - " + assertion.msg)
         }
       }
 
@@ -1036,11 +1044,11 @@ tea.reportTap = function(testResults) {
       if (assertionFailed === true || tea.args.verbose === true || tea.args.v) {
         var actual = JSON.stringify(assertion.actual)
         var expected = JSON.stringify(assertion.expected)
-        tea.log(" ---")
-        tea.log.fail("  operator: " + assertion.operator, "")
-        tea.log.fail("  expected: " + expected, "")
-        tea.log.fail("  actual:   " + actual, "")
-        tea.log(" ...\n")
+        tea.log(test.indentStr + " ---")
+        tea.log.fail(test.indentStr + "  operator: " + assertion.operator, "")
+        tea.log.fail(test.indentStr + "  expected: " + expected, "")
+        tea.log.fail(test.indentStr + "  actual:   " + actual, "")
+        tea.log(test.indentStr + " ...\n")
       }
       num++
     })
