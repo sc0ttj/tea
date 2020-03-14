@@ -6,13 +6,14 @@
     <p align="center"><i>"Test environment application"</i><p>
 </p>
 
-**Tea** is a software testing suite, similar to `tape`, `jasmine`, `jest`, `cypress`, etc, but much smaller, more lightweight, and with fewer features.
+**Tea** is a software testing suite, similar to `node-tap`, `tape`, `mocha`, `jasmine`, etc, but much smaller, more lightweight, and with fewer features.
 
 ## Features
 
-- fast, lightweight, minimal code (~4kb minified and gzipped)
+- fast, lightweight, minimal code (~4.3kb minified and gzipped)
 - very little setup, a fairly complete solution
 - includes assertions, test harness, test runner, test reporter
+- all in a single file,  `src/tea.js`
 - supports flexible syntax for writing your tests:
   - multiple assertion methods and syntaxes
   - grouped and nested tests
@@ -22,10 +23,11 @@
   - NodeJS - show test results in the terminal
   - CI environments - show results in the terminal
 - supports the following CLI options:
-  - `--fail-fast`: exit after the first failing test
   - `--quiet`: only show failing tests
+  - `--fail-fast`: exit after the first failing test
   - `--verbose`: show expected/actual for all tests (including passing tests)
   - `--format=console|tap|debug`: the format of the test results
+  - `--no-indent`: don't indent grouped results (useful if passing test results to a TAP-format prettifier)
 
 ## Installation
 
@@ -447,8 +449,9 @@ tea.run()
 In summary, to avoid using globals with `tea`:
 
 - don't call `tea()` before your tests
-- call `tea.test()` instead of just `tea.test()`
-- pass `t` in as a parameter in your tests, or use `tea.assert`, `tea.expect` inside your tests, instead of just `assert`, `expect`
+- call `tea.test()` instead of just `test()`
+- pass in `t` as a param to your tests... 
+- ...or use `tea.assert`, `tea.expect` instead of `assert`, `expect`
 - call `tea.run()` instead of just `run()`
 
 ## Integration tests
@@ -477,13 +480,28 @@ You can even copy and paste `dist/tea.umd.js` into the DevTools console directly
 
 **NOTE**:
 
-In the browser, passing command-line options like `--quiet` won't work, but you can set `tea.quiet = true`, `tea.args.verbose = true`, and `tea.failFast = true` in the DevTools directly, and then call `run()`.
+In the browser, passing command-line options like `--quiet` won't work, but you can set these options in the DevTools directly instead, and then call `run()`:
+
+- `tea.quiet = true|false`
+- `tea.args.verbose = true|false`
+- `tea.failFast = true|false`
+- `tea.reportFormat = 'console|tap|debug'`
 
 You'll be able to see the test results in the DevTools:
 
 <p align="center">
   <img src="https://i.imgur.com/PtzXWFW.png" alt="test results shown in DevTools" />
 </p>
+
+#### Debug with console.table()
+
+If using the DevTools to see your test results, you can set `tea.reportFormat = 'debug'`, to see your test results in a clickable, filterable `console.table()`:
+
+<p align="center">
+  <img src="https://i.imgur.com/XHcw1yj.png" alt="test results shown in DevTools, using "debug" format-  shows results using console.table()" />
+</p>
+
+NOTE: If running tests using Node, you can set `--format=debug` to see the AssertionError stack traces ;) 
 
 ### Running in a headless browser
 
@@ -565,6 +583,9 @@ Rebuild the bundles in `dist/` using this command: `npm run build`
   - include wrapper/support for PhantomJS (see `node-phantomjs-simple`)
   - bundle phantomjs (32bit and 64bit builds)
 - Add better stack traces - resolve them and cut out the irrelevant stuff
+- Some kind of snapshotting
+
+Pull Requests welcome ;) 
 
 ## Acknowledgements
 
