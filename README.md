@@ -299,6 +299,7 @@ Where `foo` can be any of these methods:
 - `t.strictEqual()` - uses the `===` comparison
 - `t.deepEqual()` - uses the `react-fast-compare` deep equals comparison
 - `t.throws()` - checks if something throws an error
+- `t.type()` - check if something is of a specific type
 
 (Note the difference to `tap` and `tape` - there's no `msg` as the third parameter)
 
@@ -314,6 +315,8 @@ test("test using t", () => {
   t.deepEqual({ one: 1, foo: "baz" }, { one: 1, foo: "bar" })
   t.throws(new Error())
   t.throws("I'm just a String")
+  t.type("I'm of type String", "function")
+  t.type("I'm of type String", "string")
 })
 ```
 

@@ -512,13 +512,7 @@ tea.assert.strictEquals = function(msg, a, b) {
 }
 
 tea.assert.isType = function(msg, a, b) {
-  return tea.assertHarness(
-    typeof a === b,
-    msg,
-    typeof a,
-    typeof b,
-    "typeof " + b
-  )
+  return tea.assertHarness(typeof a === b, msg, typeof a, b, "typeof " + b)
 }
 
 tea.assert.truthy = function(msg, a, b) {
@@ -607,6 +601,15 @@ tea.t.deepEqual = function(actual, expected) {
     typeof actual + " deep equals " + typeof expected,
     actual,
     expected
+  )
+}
+tea.t.type = function(a, b) {
+  return tea.assertHarness(
+    typeof a === b,
+    typeof a + " === typeof " + b,
+    typeof a,
+    b,
+    "typeof " + b
   )
 }
 tea.t.throws = function(actual, expected) {

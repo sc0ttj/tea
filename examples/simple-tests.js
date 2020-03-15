@@ -106,6 +106,8 @@ test("test using t", () => {
   t.deepEqual({ one: 1, foo: "baz" }, { one: 1, foo: "bar" })
   t.throws(new Error())
   t.throws("I'm just a String")
+  t.type("I'm of type String (fails)", "function")
+  t.type("I'm of type String", "string")
 })
 
 run()
