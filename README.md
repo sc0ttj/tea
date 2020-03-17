@@ -6,6 +6,15 @@
     <p align="center"><i>"Test environment application"</i><p>
 </p>
 
+
+[![npm version](https://badge.fury.io/js/%40scottjarvis%2Ftea.svg)](https://badge.fury.io/js/%40scottjarvis%2Ftea) [![Dependency Status](https://david-dm.org/sc0ttj/tea.svg)](https://david-dm.org/sc0ttj/tea) [![devDependencies Status](https://david-dm.org/sc0ttj/tea/dev-status.svg)](https://david-dm.org/sc0ttj/tea?type=dev) [![Node version](https://img.shields.io/node/v/@scottjarvis/tea.svg?style=flat)](http://nodejs.org/download/)
+
+[![npm version](https://badgen.net/npm/dt/@scottjarvis/tea)](https://badgen.net/npm/dt/@scottjarvis/tea)
+
+[![npm version](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea?color=green)](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea)
+
+[![npm version](https://badgen.net/travis/@scottjarvis/tea?color=green)](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea)
+
 **Tea** is a software testing suite, similar to `node-tap`, `tape`, `mocha`, `jasmine`, etc, but much smaller, more lightweight, and with fewer features.
 
 ## Features

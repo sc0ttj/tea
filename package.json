@@ -17,7 +17,7 @@
 	"scripts": {
 		"build": "microbundle --name tea --compress",
 		"dev": "microbundle watch",
-		"test": "echo \"No test specified :/ \""
+		"test": "microbundle --name tea --compress && echo 'Build complete... No tests yet!'"
 	},
 	"keywords": [
 		"test-runner",
@@ -39,5 +39,9 @@
 	},
 	"directories": {
 		"example": "examples"
+	},
+	"engines": {
+		"node": ">=6.0.0",
+		"npm": ">=6.0.0"
 	}
 }
