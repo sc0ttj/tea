@@ -2,6 +2,7 @@
 
 function AssertionError(message, actual, expected, operator) {
   var error = Error.call(this, message)
+
   error.name = "AssertionError"
   error.message = error.message
   error.stack = error.stack
@@ -9,6 +10,7 @@ function AssertionError(message, actual, expected, operator) {
   error.actual = actual
   error.expected = expected
   error.operator = operator
+
   return error
 }
 
@@ -29,13 +31,13 @@ Error.captureStackTrace =
   Error.captureStackTrace ||
   function(error) {
     var container = new Error()
+
     Object.defineProperty(error, "stack", {
       configurable: true,
       get: function getStack() {
         var stack = container.stack
-        Object.defineProperty(this, "stack", {
-          value: stack
-        })
+
+        Object.defineProperty(this, "stack", { value: stack })
 
         return stack
       }
@@ -102,10 +104,12 @@ try {
   var global = this
 }
 
-tea = function() {
+var tea = function() {
   tea.args = tea.isNode ? tea.getArgs() : {}
 
-  if (tea.isBrowser) console.clear()
+  if (tea.isBrowser) {
+    console.clear()
+  }
   // code from browser-or-node package, to detect current environment
   global.scenario = tea.scenario
   global.group = tea.scenario
@@ -141,31 +145,37 @@ tea.isWebWorker =
 
 tea.isNode =
   typeof process !== "undefined" &&
-  process.versions != null &&
-  process.versions.node != null
+  process.versions !== null &&
+  process.versions.node !== null
 
 // parsing CLI option in Node:
 tea.getArgs = function() {
-  if (typeof process === "undefined") return {}
+  if (typeof process === "undefined") {
+    return {}
+  }
   var args = {}
-  process.argv.slice(2, process.argv.length).forEach(arg => {
+
+  process.argv.slice(2, process.argv.length).forEach(function(arg) {
     // long arg
     if (arg.slice(0, 2) === "--") {
       var longArg = arg.split("=")
       var longArgFlag = longArg[0].slice(2, longArg[0].length)
       var longArgValue = longArg.length > 1 ? longArg[1] : true
+
       args[longArgFlag] = longArgValue
     }
     // flags
     else if (arg[0] === "-") {
       var flags = arg.slice(1, arg.length).split("")
-      flags.forEach(flag => {
+
+      flags.forEach(function(flag) {
         args[flag] = true
       })
     }
   })
   tea.args = args
   tea.setArgs()
+
   return args
 }
 
@@ -173,23 +183,36 @@ tea.setArgs = function() {
   // process command-line options: allow user to override default settings
   Object.keys(tea.args).forEach(function(key) {
     var value = tea.args[key]
+
     switch (key) {
       case "no-indent":
-        if (value === "true" || value === true) tea.noIndent = true
+        if (value === "true" || value === true) {
+          tea.noIndent = true
+        }
         break
       case "q":
       case "quiet":
-        if (value === "true" || value === true) tea.quiet = true
+        if (value === "true" || value === true) {
+          tea.quiet = true
+        }
         break
       case "fail-fast":
       case "ff":
-        if (value === "true" || value === true) tea.failFast = true
+        if (value === "true" || value === true) {
+          tea.failFast = true
+        }
         break
       // set the output format
       case "format":
-        if (value === "node") value = "console"
-        if (value === "terminal") value = "console"
-        if (value === "devtools") value = "console"
+        if (value === "node") {
+          value = "console"
+        }
+        if (value === "terminal") {
+          value = "console"
+        }
+        if (value === "devtools") {
+          value = "console"
+        }
         tea.reportFormat = value
         break
       // print help info
@@ -254,7 +277,10 @@ tea.scenario = function(msg, fn) {
 }
 
 // test harness - setup the test object, add it to tests array
-tea.test = function(msg, fn, expected = "nowt") {
+tea.test = function(msg, fn, expected) {
+  if (expected === undefined) {
+    expected = "nowt"
+  }
   tea.currentTest = {
     msg: msg,
     indentStr: tea.indentStr,
@@ -287,7 +313,10 @@ tea.assertHarness = function(assertion, msg, actual, expected, operator) {
 
   tea.assertHarness.result = assertion
 
-  if (operator.toLowerCase() === "falsey" && !!tea.assertHarness.result) {
+  if (
+    operator.toLowerCase() === "falsey" &&
+    Boolean(tea.assertHarness.result)
+  ) {
     // it was indeed falsey, so result is true
     tea.assertHarness.result = true
   }
@@ -306,11 +335,11 @@ tea.assertHarness = function(assertion, msg, actual, expected, operator) {
   tea.assertHarness.stack = tea.assertHarness.result.stack
 
   tea.currentTest.assertions.push({
-    actual,
-    expected,
+    actual: actual,
+    expected: expected,
     operator: tea.assertHarness.operator,
     result: tea.assertHarness.result,
-    msg
+    msg: msg
   })
 
   return tea.assertHarness.result
@@ -356,7 +385,7 @@ tea.expect = function(msg, fn, expected) {
     expected: tea.expect.expected,
     operator: "boolean",
     result: tea.expect.result,
-    msg
+    msg: msg
   })
 
   return tea.expect.result
@@ -364,7 +393,9 @@ tea.expect = function(msg, fn, expected) {
 
 // react-compatible deep equals function (from react-fast-compare@3.0.1)
 tea.deepEquals = function(a, b) {
-  if (a === b) return true
+  if (a === b) {
+    return true
+  }
 
   // START: fast-deep-equal es6/index.js 3.1.1
   var hasElementType = typeof Element !== "undefined"
@@ -372,15 +403,24 @@ tea.deepEquals = function(a, b) {
   var hasSet = typeof Set === "function"
   var hasArrayBuffer = typeof ArrayBuffer === "function"
 
-  if (a && b && typeof a == "object" && typeof b == "object") {
-    if (a.constructor !== b.constructor) return false
+  if (a && b && typeof a === "object" && typeof b === "object") {
+    if (a.constructor !== b.constructor) {
+      return false
+    }
 
     var length, i, keys
+
     if (Array.isArray(a)) {
       length = a.length
-      if (length != b.length) return false
-      for (i = length; i-- !== 0; )
-        if (!tea.deepEquals(a[i], b[i])) return false
+      if (length != b.length) {
+        return false
+      }
+      for (i = length; i-- !== 0; ) {
+        if (!tea.deepEquals(a[i], b[i])) {
+          return false
+        }
+      }
+
       return true
     }
 
@@ -405,47 +445,82 @@ tea.deepEquals = function(a, b) {
     //
     //    **Note**: `i` access switches to `i.value`.
     var it
+
     if (hasMap && a instanceof Map && b instanceof Map) {
-      if (a.size !== b.size) return false
+      if (a.size !== b.size) {
+        return false
+      }
       it = a.entries()
-      while (!(i = it.next()).done) if (!b.has(i.value[0])) return false
+      while (!(i = it.next()).done) {
+        if (!b.has(i.value[0])) {
+          return false
+        }
+      }
       it = a.entries()
-      while (!(i = it.next()).done)
-        if (!tea.deepEquals(i.value[1], b.get(i.value[0]))) return false
+      while (!(i = it.next()).done) {
+        if (!tea.deepEquals(i.value[1], b.get(i.value[0]))) {
+          return false
+        }
+      }
+
       return true
     }
 
     if (hasSet && a instanceof Set && b instanceof Set) {
-      if (a.size !== b.size) return false
+      if (a.size !== b.size) {
+        return false
+      }
       it = a.entries()
-      while (!(i = it.next()).done) if (!b.has(i.value[0])) return false
+      while (!(i = it.next()).done) {
+        if (!b.has(i.value[0])) {
+          return false
+        }
+      }
+
       return true
     }
     // END: Modifications
 
     if (hasArrayBuffer && ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {
       length = a.length
-      if (length != b.length) return false
-      for (i = length; i-- !== 0; ) if (a[i] !== b[i]) return false
+      if (length != b.length) {
+        return false
+      }
+      for (i = length; i-- !== 0; ) {
+        if (a[i] !== b[i]) {
+          return false
+        }
+      }
+
       return true
     }
 
-    if (a.constructor === RegExp)
+    if (a.constructor === RegExp) {
       return a.source === b.source && a.flags === b.flags
-    if (a.valueOf !== Object.prototype.valueOf)
+    }
+    if (a.valueOf !== Object.prototype.valueOf) {
       return a.valueOf() === b.valueOf()
-    if (a.toString !== Object.prototype.toString)
+    }
+    if (a.toString !== Object.prototype.toString) {
       return a.toString() === b.toString()
+    }
 
     keys = Object.keys(a)
     length = keys.length
-    if (length !== Object.keys(b).length) return false
+    if (length !== Object.keys(b).length) {
+      return false
+    }
 
-    for (i = length; i-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
+    for (i = length; i-- !== 0; ) {
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) {
+        return false
+      }
+    }
     // START: react-fast-compare:
     // enable custom handling for DOM elements
-    if (hasElementType && a instanceof Element) return false
+    if (hasElementType && a instanceof Element) {
+      return false
+    }
     // enable custom handling for React
     for (i = length; i-- !== 0; ) {
       if (keys[i] === "_owner" && a.$$typeof) {
@@ -457,7 +532,9 @@ tea.deepEquals = function(a, b) {
       }
 
       // all other properties should be traversed as usual
-      if (!tea.deepEquals(a[keys[i]], b[keys[i]])) return false
+      if (!tea.deepEquals(a[keys[i]], b[keys[i]])) {
+        return false
+      }
     }
     // END: react-fast-compare
     return true
@@ -479,6 +556,7 @@ tea.isEqual = function(a, b) {
       // firefox: "InternalError", too much recursion"
       // edge: "Error", "Out of stack space"
       console.warn("tea.isEqual() cannot handle circular refs")
+
       return false
     }
     // some other error. we should definitely know about these
@@ -487,7 +565,11 @@ tea.isEqual = function(a, b) {
 }
 
 // function that accepts an object containing 'msg', actual', 'expected'
-tea.assert = function(options = {}) {
+tea.assert = function(options) {
+  if (options === undefined) {
+    options = {}
+  }
+
   return tea.assertHarness(
     options.actual === (options.expected || true),
     options.message,
@@ -516,7 +598,7 @@ tea.assert.isType = function(msg, a, b) {
 }
 
 tea.assert.truthy = function(msg, a, b) {
-  return tea.assertHarness(!!a, msg, a, "truthy", "truthy")
+  return tea.assertHarness(Boolean(a), msg, a, "truthy", "truthy")
 }
 
 tea.assert.falsey = function(msg, a, b) {
@@ -543,7 +625,7 @@ tea.assert.isReactElement = function(msg, a, b) {
 
 // https://stackoverflow.com/questions/4402272/checking-if-data-is-immutable
 tea.isMutable = function(a) {
-  return a && (typeof a == "object" || typeof a == "function")
+  return a && (typeof a === "object" || typeof a === "function")
 }
 
 tea.assert.isMutable = function(msg, a, b) {
@@ -629,10 +711,14 @@ tea.diff = function(obj1, obj2) {
 
   var arraysMatch = function(arr1, arr2) {
     // Check if the arrays are the same length
-    if (arr1.length !== arr2.length) return false
+    if (arr1.length !== arr2.length) {
+      return false
+    }
     // Check if all items exist and are in the same order
     for (var i = 0; i < arr1.length; i++) {
-      if (arr1[i] !== arr2[i]) return false
+      if (arr1[i] !== arr2[i]) {
+        return false
+      }
     }
     // Otherwise, return true
     return true
@@ -643,21 +729,26 @@ tea.diff = function(obj1, obj2) {
     var type1 = Object.prototype.toString.call(item1)
     var type2 = Object.prototype.toString.call(item2)
     // If type2 is undefined it has been removed
+
     if (type2 === "[object Undefined]") {
       diffs[key] = null
+
       return
     }
     // If items are different types
     if (type1 !== type2) {
       diffs[key] = item2
+
       return
     }
     // If an object, compare recursively
     if (type1 === "[object Object]") {
       var objDiff = tea.diff(item1, item2)
+
       if (Object.keys(objDiff).length > 0) {
         diffs[key] = objDiff
       }
+
       return
     }
     // If an array, compare
@@ -665,6 +756,7 @@ tea.diff = function(obj1, obj2) {
       if (!arraysMatch(item1, item2)) {
         diffs[key] = item2
       }
+
       return
     }
     // Else if it's a function, convert to a string and compare
@@ -673,14 +765,13 @@ tea.diff = function(obj1, obj2) {
       if (item1.toString() !== item2.toString()) {
         diffs[key] = item2
       }
-    } else {
-      if (item1 !== item2) {
-        diffs[key] = item2
-      }
+    } else if (item1 !== item2) {
+      diffs[key] = item2
     }
   }
   // Compare our objects:
   // - Loop through the first object
+
   for (key in obj1) {
     if (obj1.hasOwnProperty(key)) {
       compare(obj1[key], obj2[key], key)
@@ -709,9 +800,11 @@ tea.run = function() {
   tea.passes = 0
   tea.fails = 0
 
-  if (typeof tea.test.beforeAll === "function") tea.test.beforeAll()
+  if (typeof tea.test.beforeAll === "function") {
+    tea.test.beforeAll()
+  }
 
-  tea.tests.forEach(test => {
+  tea.tests.forEach(function(test) {
     // reset assertions for this test
     test.assertions = []
     // set current
@@ -723,6 +816,7 @@ tea.run = function() {
     // if a 3rd param (expected) was given, run the test against the expected value
     if (test.expected !== "nowt") {
       var testResult = typeof test.fn === "function" ? test.fn() : test.fn
+
       if (testResult !== test.expected) {
         var theError = new AssertionError(
           test.msg,
@@ -730,6 +824,7 @@ tea.run = function() {
           test.expected,
           "==="
         )
+
         test.passes = 0
         test.fails = 1
         test.total = 1
@@ -763,47 +858,49 @@ tea.run = function() {
       }
 
       // test has no 'expected' param
+    } else if (typeof test.fn === "function") {
+      try {
+        // run the func containing the assertions
+        test.fn(tea.t)
+      } catch (e) {
+        test.result = e
+        tea.log.fail("ERROR IN TEST", " '" + test.msg + "'")
+        console.error({
+          msg: test.msg,
+          result: e
+        })
+        if (tea.isNode) {
+          process.exit()
+        }
+      }
     } else {
-      if (typeof test.fn === "function") {
-        try {
-          // run the func containing the assertions
-          test.fn(tea.t)
-        } catch (e) {
-          test.result = e
-          tea.log.fail("ERROR IN TEST", " '" + test.msg + "'")
-          console.error({
-            msg: test.msg,
-            result: e
-          })
-          if (tea.isNode) process.exit()
-        }
+      // no assertion method used..
+      this.result = test.fn
+      if (this.result) {
+        test.total += 1
+        test.passes += 1
+        test.assertions.push({
+          result: this.result,
+          msg: test.msg
+        })
       } else {
-        // no assertion method used..
-        this.result = test.fn
-        if (!!this.result) {
-          test.total += 1
-          test.passes += 1
-          test.assertions.push({
-            result: this.result,
-            msg: test.msg
-          })
-        } else {
-          var err = new Error(test.msg)
-          test.total += 1
-          test.fails += 1
-          test.assertions.push({
-            result: err,
-            msg: test.msg
-          })
-        }
+        var err = new Error(test.msg)
+
+        test.total += 1
+        test.fails += 1
+        test.assertions.push({
+          result: err,
+          msg: test.msg
+        })
       }
     }
 
     // get list of assertion failures in this test,
-    var failures = test.assertions.filter(
-      assertion => assertion.result !== true
-    )
+    var failures = test.assertions.filter(function(assertion) {
+      return assertion.result !== true
+    })
     // and assign the first failing assertion to the test result and stack trace
+
     if (failures.length > 0) {
       test.status = "FAIL"
       test.result = failures[0].result
@@ -819,7 +916,9 @@ tea.run = function() {
     // report the results
     tea.report([test])
 
-    if (typeof tea.test.afterEach === "function") tea.test.afterEach()
+    if (typeof tea.test.afterEach === "function") {
+      tea.test.afterEach()
+    }
 
     // add to testResults object (reportSummary uses it)
     if (!test.group) {
@@ -839,7 +938,9 @@ tea.run = function() {
   })
 
   // all tests now finished...
-  if (typeof tea.test.afterAll === "function") tea.test.afterAll()
+  if (typeof tea.test.afterAll === "function") {
+    tea.test.afterAll()
+  }
   tea.currentTest = {}
   tea.assertHarness.stack = null
   tea.timeTaken = new Date().getTime() - start
@@ -897,13 +998,19 @@ tea.log.bold = function(arg) {
 tea.reportSummary = function() {
   if (tea.reportFormat === "tap") {
     var fails = []
-    tea.testResults.forEach(test => {
-      if (test.status === "FAIL") return fails.push(test.msg)
+
+    tea.testResults.forEach(function(test) {
+      if (test.status === "FAIL") {
+        return fails.push(test.msg)
+      }
     })
 
     var passes = []
-    tea.testResults.forEach(test => {
-      if (test.status !== "FAIL") return passes.push(test.msg)
+
+    tea.testResults.forEach(function(test) {
+      if (test.status !== "FAIL") {
+        return passes.push(test.msg)
+      }
     })
     console.log("\n")
     console.log("1.." + tea.testResults.length)
@@ -924,7 +1031,7 @@ tea.report = function(testResults) {
   var format = tea.reportFormat || "console"
 
   // re-format results (keep only bits we want)
-  testResults.forEach(result => {
+  testResults.forEach(function(result) {
     results.push({
       group: result.group || false,
       msg: result.msg,
@@ -938,16 +1045,22 @@ tea.report = function(testResults) {
   })
 
   // output using ANSI colours (terminal), or CSS colours (Dev Tools)
-  if (format === "console") tea.reportConsole(results)
+  if (format === "console") {
+    tea.reportConsole(results)
+  }
   // output TAP format
-  if (format === "tap") tea.reportTap(results)
+  if (format === "tap") {
+    tea.reportTap(results)
+  }
   // output console.table
-  if (format === "debug") tea.reportDebug(results)
+  if (format === "debug") {
+    tea.reportDebug(results)
+  }
 }
 
 tea.reportConsole = function(testResults) {
-  testResults.forEach((test, n) => {
-    var failed = test.assertions.filter((assertion, i) => {
+  testResults.forEach(function(test, n) {
+    var failed = test.assertions.filter(function(assertion, i) {
       return assertion.result.toString().indexOf("Error") !== -1
     })
 
@@ -959,14 +1072,16 @@ tea.reportConsole = function(testResults) {
       newline = " "
     }
 
-    test.assertions.forEach((assertion, i) => {
+    test.assertions.forEach(function(assertion, i) {
       assertionFailed = false
       if (assertion.result.toString().indexOf("Error") !== -1) {
         assertionFailed = true
       }
 
       // if --quiet, and no failures, skip reporting the passes
-      if (assertionFailed === false && tea.quiet) return
+      if (assertionFailed === false && tea.quiet) {
+        return
+      }
 
       // only print any results if an actual test with results (and not just a group)
       if (!test.group) {
@@ -995,6 +1110,7 @@ tea.reportConsole = function(testResults) {
                 typeof assertion.actual === "array")
             ) {
               var theDiff = tea.diff(assertion.expected, assertion.actual)
+
               tea.log.bold(
                 test.indentStr + "    diff:      " + JSON.stringify(theDiff)
               )
@@ -1009,30 +1125,37 @@ tea.reportConsole = function(testResults) {
         }
       }
     })
-    if (newline === " ") tea.log(newline)
+    if (newline === " ") {
+      tea.log(newline)
+    }
   })
 }
 
 tea.reportTap = function(testResults) {
   console.log("")
   var num = 1
-  testResults.forEach((test, n) => {
-    if (tea.noIndent) test.indentStr = ""
+
+  testResults.forEach(function(test, n) {
+    if (tea.noIndent) {
+      test.indentStr = ""
+    }
 
     tea.log.header(test.indentStr + "# " + test.msg)
 
-    var failed = test.assertions.filter((assertion, i) => {
+    var failed = test.assertions.filter(function(assertion, i) {
       return assertion.result.toString().indexOf("Error") !== -1
     })
 
-    test.assertions.forEach((assertion, i) => {
+    test.assertions.forEach(function(assertion, i) {
       assertionFailed = false
       if (assertion.result.toString().indexOf("Error") !== -1) {
         assertionFailed = true
       }
 
       // if --quiet, and no failures, skip reporting the passes
-      if (assertionFailed === false && tea.quiet) return
+      if (assertionFailed === false && tea.quiet) {
+        return
+      }
 
       // only print any results if an actual test with results (and not just a group)
       if (!test.group) {
@@ -1047,6 +1170,7 @@ tea.reportTap = function(testResults) {
       if (assertionFailed === true || tea.args.verbose === true || tea.args.v) {
         var actual = JSON.stringify(assertion.actual)
         var expected = JSON.stringify(assertion.expected)
+
         tea.log(test.indentStr + " ---")
         tea.log.fail(test.indentStr + "  operator: " + assertion.operator, "")
         tea.log.fail(test.indentStr + "  expected: " + expected, "")
@@ -1060,9 +1184,13 @@ tea.reportTap = function(testResults) {
 
 tea.reportDebug = function(testResults) {
   if (tea.isNode) {
-    testResults.forEach(result => {
-      if (result.group) return
-      if (tea.quiet && result.result === "ok") return
+    testResults.forEach(function(result) {
+      if (result.group) {
+        return
+      }
+      if (tea.quiet && result.result === "ok") {
+        return
+      }
       console.log(result.msg)
       console.log("  passes:     " + result.passes)
       console.log("  fails:      " + result.fails)
@@ -1071,9 +1199,13 @@ tea.reportDebug = function(testResults) {
       console.log("\n")
     })
   } else {
-    testResults.forEach(result => {
-      if (result.group === true) return
-      if (tea.quiet === true && result.result === "ok") return
+    testResults.forEach(function(result) {
+      if (result.group === true) {
+        return
+      }
+      if (tea.quiet === true && result.result === "ok") {
+        return
+      }
       console.table({
         test: {
           msg: result.msg,
