@@ -1,6 +1,6 @@
 {
 	"name": "@scottjarvis/tea",
-	"version": "1.0.17",
+	"version": "1.0.18",
 	"description": "Test Environment Application",
 	"author": "sc0ttj",
 	"license": "MIT",
@@ -11,6 +11,8 @@
 	"homepage": "https://github.com/sc0ttj/tea",
 	"main": "dist/tea.js",
 	"module": "dist/tea.es6.js",
+	"es2015": "dist/tea.es6.js",
+	"main:umd": "dist/tea.umd.js",
 	"browser": "dist/tea.umd.js",
 	"unpkg": "dist/tea.umd.js",
 	"source": "src/tea.js",
@@ -29,6 +31,11 @@
 		"bdd",
 		"assert",
 		"tap"
+	],
+	"files": [
+		"dist/tea.js",
+		"dist/tea.es6.js",
+		"dist/tea.umd.js"
 	],
 	"dependencies": {},
 	"devDependencies": {
