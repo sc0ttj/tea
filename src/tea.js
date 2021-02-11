@@ -1105,9 +1105,9 @@ tea.reportConsole = function(testResults) {
             // if comparing objects or arrays, show a diff
             if (
               (typeof assertion.expected === "object" ||
-                typeof assertion.expected === "array") &&
+                Array.isArray(assertion.expected)) &&
               (typeof assertion.actual === "object" ||
-                typeof assertion.actual === "array")
+                Array.isArray(assertion.actual))
             ) {
               var theDiff = tea.diff(assertion.expected, assertion.actual)
 
