@@ -37,7 +37,7 @@
 		"dist/tea.es6.js",
 		"dist/tea.umd.js",
 		"src/tea.js",
-		"src/tea.es6.js",
+		"src/tea.es6.js"
 	],
 	"dependencies": {},
 	"devDependencies": {
