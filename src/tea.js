@@ -196,6 +196,12 @@ tea.setArgs = function() {
           tea.quiet = true
         }
         break
+      case "nt":
+      case "no-totals":
+        if (value === "true" || value === true) {
+          tea.noTotals = true
+        }
+        break
       case "fail-fast":
       case "ff":
         if (value === "true" || value === true) {
@@ -1018,10 +1024,12 @@ tea.reportSummary = function() {
     console.log("# pass " + passes.length, "")
     console.log("# fail " + fails.length)
   } else {
-    console.log("-------------------------")
-    tea.log("Total tests:  " + tea.testResults.length)
-    tea.log("Total time:   " + tea.timeTaken + "ms")
-    console.log("-------------------------")
+    if (tea.noTotals !== true) {
+      console.log("-------------------------")
+      tea.log("Total tests:  " + tea.testResults.length)
+      tea.log("Total time:   " + tea.timeTaken + "ms")
+      console.log("-------------------------")
+    }
   }
 }
 
