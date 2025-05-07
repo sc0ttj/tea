@@ -129,6 +129,7 @@ Options:
   --verbose          List the actual/expected results of passing tests too
   --format=<name>    The style/format of the test results (console|debug|tap)
   --no-indent        Don't indent grouped test results (useful if piping to TAP prettifiers)
+  --no-totals        Don't print total passes and tests at end of test results (useful if running `run()` in a loop)
   --help             Show this help screen
 ```
 
@@ -403,9 +404,11 @@ The test results output will be indented appropriately, like so:
   <img src="https://i.imgur.com/V9wWIMM.png" alt="grouped and indented test results" />
 </p>
 
-## No globals
+## No globals / Webpack bundling
 
 Like many TAP-style test suites, `tea` can run without needing any globals or "magic" variables, that seem to come from nowhere.
+
+This is also useful if bundled inside webpack where the globals might not register as expected.
 
 To run `tea` in a way that does _not_ use globals, see `examples/no-globals-tests.js`:
 
@@ -448,6 +451,9 @@ tea.test("test two, using tea.t", t => {
 })
 
 tea.run()
+
+// Or simply use destructuring like so:
+const { test, t, expect, run } = tea;
 
 ```
 
