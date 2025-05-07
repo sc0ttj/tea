@@ -6,7 +6,7 @@
     <p align="center"><i>"Test environment application"</i><p>
 </p>
 
-[![npm version](https://badge.fury.io/js/%40scottjarvis%2Ftea.svg)](https://badge.fury.io/js/%40scottjarvis%2Ftea) [![Dependency Status](https://david-dm.org/sc0ttj/tea.svg)](https://david-dm.org/sc0ttj/tea) [![devDependencies Status](https://david-dm.org/sc0ttj/tea/dev-status.svg)](https://david-dm.org/sc0ttj/tea?type=dev) [![Node version](https://badgen.net/npm/node/@scottjarvis/tea)](http://nodejs.org/download/) [![Build Status](https://travis-ci.org/sc0ttj/tea.svg?branch=master)](https://travis-ci.org/sc0ttj/tea) [![npm version](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea?color=green&label=gzipped)](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea) [![npm version](https://badgen.net/npm/dt/@scottjarvis/tea)](https://badgen.net/npm/dt/@scottjarvis/tea)
+[![npm version](https://badge.fury.io/js/%40scottjarvis%2Ftea.svg)](https://badge.fury.io/js/%40scottjarvis%2Ftea) [![Node version](https://badgen.net/npm/node/@scottjarvis/tea)](http://nodejs.org/download/) [![Build Status](https://travis-ci.org/sc0ttj/tea.svg?branch=master)](https://travis-ci.org/sc0ttj/tea) [![npm version](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea?color=green&label=gzipped)](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea) [![npm version](https://badgen.net/npm/dt/@scottjarvis/tea)](https://badgen.net/npm/dt/@scottjarvis/tea)
 
 **Tea** is a software testing suite, similar to `node-tap`, `tape`, `mocha`, `jasmine`, etc, but much smaller, more lightweight, and with fewer features.
 
@@ -129,6 +129,7 @@ Options:
   --verbose          List the actual/expected results of passing tests too
   --format=<name>    The style/format of the test results (console|debug|tap)
   --no-indent        Don't indent grouped test results (useful if piping to TAP prettifiers)
+  --no-totals        Don't print total passes and tests at end of test results (useful if running `run()` in a loop)
   --help             Show this help screen
 ```
 
@@ -403,9 +404,11 @@ The test results output will be indented appropriately, like so:
   <img src="https://i.imgur.com/V9wWIMM.png" alt="grouped and indented test results" />
 </p>
 
-## No globals
+## No globals / Webpack bundling
 
 Like many TAP-style test suites, `tea` can run without needing any globals or "magic" variables, that seem to come from nowhere.
+
+This is also useful if bundled inside webpack where the globals might not register as expected.
 
 To run `tea` in a way that does _not_ use globals, see `examples/no-globals-tests.js`:
 
@@ -448,6 +451,9 @@ tea.test("test two, using tea.t", t => {
 })
 
 tea.run()
+
+// Or simply use destructuring like so:
+const { test, t, expect, run } = tea;
 
 ```
 
@@ -538,7 +544,7 @@ In a file named `.babelrc` (in the root/top-level folder of your project):
 }
 ```
 
-You can then use `ghostjs` async/await stuff inside your tests:
+You can then use `ghostjs` async/await stuff with your tests:
 
 ```js
 tea = require('tea');
@@ -546,16 +552,21 @@ ghost = require('ghostjs');
 
 tea() // init tea
 
-test("check the page loaded OK", async () => {
-  // Get page title
-  await ghost.open('http://google.com')
-  let pageTitle = await ghost.pageTitle()
-  assert.strictEquals(pageTitle, 'Google')
+(async () => {
 
-  // Get the content of the body
-  let body = await ghost.findElement('body')
-  assert.strictEquals(await body.isVisible(), true)
-})
+  // Do all the async stuff before your `test` function
+  await ghost.open('http://google.com')
+  const pageTitle = await ghost.pageTitle()
+  const body = await ghost.findElement('body')
+  const isVisible = await body.isVisible();
+
+  // Once the async stuff is finished, and you have your data, you can run `test`
+  test("check the page loaded OK", () => {
+    assert.equals(pageTitle, 'Google')
+    assert.equals(isVisible, true)
+  })
+
+})();
 
 ...
 

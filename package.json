@@ -1,6 +1,6 @@
 {
 	"name": "@scottjarvis/tea",
-	"version": "1.0.18",
+	"version": "1.0.19",
 	"description": "Test Environment Application",
 	"author": "sc0ttj",
 	"license": "MIT",
@@ -35,7 +35,9 @@
 	"files": [
 		"dist/tea.js",
 		"dist/tea.es6.js",
-		"dist/tea.umd.js"
+		"dist/tea.umd.js",
+		"src/tea.js",
+		"src/tea.es6.js"
 	],
 	"dependencies": {},
 	"devDependencies": {
