@@ -6,7 +6,7 @@
     <p align="center"><i>"Test environment application"</i><p>
 </p>
 
-[![npm version](https://badge.fury.io/js/%40scottjarvis%2Ftea.svg)](https://badge.fury.io/js/%40scottjarvis%2Ftea) [![Dependency Status](https://david-dm.org/sc0ttj/tea.svg)](https://david-dm.org/sc0ttj/tea) [![devDependencies Status](https://david-dm.org/sc0ttj/tea/dev-status.svg)](https://david-dm.org/sc0ttj/tea?type=dev) [![Node version](https://badgen.net/npm/node/@scottjarvis/tea)](http://nodejs.org/download/) [![Build Status](https://travis-ci.org/sc0ttj/tea.svg?branch=master)](https://travis-ci.org/sc0ttj/tea) [![npm version](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea?color=green&label=gzipped)](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea) [![npm version](https://badgen.net/npm/dt/@scottjarvis/tea)](https://badgen.net/npm/dt/@scottjarvis/tea)
+[![npm version](https://badge.fury.io/js/%40scottjarvis%2Ftea.svg)](https://badge.fury.io/js/%40scottjarvis%2Ftea) [![Node version](https://badgen.net/npm/node/@scottjarvis/tea)](http://nodejs.org/download/) [![Build Status](https://travis-ci.org/sc0ttj/tea.svg?branch=master)](https://travis-ci.org/sc0ttj/tea) [![npm version](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea?color=green&label=gzipped)](https://badgen.net/bundlephobia/minzip/@scottjarvis/tea) [![npm version](https://badgen.net/npm/dt/@scottjarvis/tea)](https://badgen.net/npm/dt/@scottjarvis/tea)
 
 **Tea** is a software testing suite, similar to `node-tap`, `tape`, `mocha`, `jasmine`, etc, but much smaller, more lightweight, and with fewer features.
 
