@@ -29,6 +29,7 @@
   - `--fail-fast`: exit after the first failing test
   - `--verbose`: show expected/actual for all tests (including passing tests)
   - `--format=console|tap|debug`: the format of the test results
+  - `--no-totals`: don't print totals passing tests summary at end of test results
   - `--no-indent`: don't indent grouped results (useful if passing test results to a TAP-format prettifier)
 
 ## Installation
