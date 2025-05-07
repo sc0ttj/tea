@@ -538,7 +538,7 @@ In a file named `.babelrc` (in the root/top-level folder of your project):
 }
 ```
 
-You can then use `ghostjs` async/await stuff inside your tests:
+You can then use `ghostjs` async/await stuff with your tests:
 
 ```js
 tea = require('tea');
@@ -546,16 +546,21 @@ ghost = require('ghostjs');
 
 tea() // init tea
 
-test("check the page loaded OK", async () => {
-  // Get page title
-  await ghost.open('http://google.com')
-  let pageTitle = await ghost.pageTitle()
-  assert.strictEquals(pageTitle, 'Google')
+(async () => {
 
-  // Get the content of the body
-  let body = await ghost.findElement('body')
-  assert.strictEquals(await body.isVisible(), true)
-})
+  // Do all the async stuff before your `test` function
+  await ghost.open('http://google.com')
+  const pageTitle = await ghost.pageTitle()
+  const body = await ghost.findElement('body')
+  const isVisible = await body.isVisible();
+
+  // Once the async stuff is finished, and you have your data, you can run `test`
+  test("check the page loaded OK", () => {
+    assert.equals(pageTitle, 'Google')
+    assert.equals(isVisible, true)
+  })
+
+})();
 
 ...
 
